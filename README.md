@@ -29,6 +29,8 @@ Interface intuitiva que transforma dados em insights acionáveis, gerando planos
 
 ## Arquitetura do Sistema
 
+![Arquitetura do Sistema](estrutura.png)
+
 ### Stack Tecnológica
 
 | Camada | Tecnologia | Justificativa |
@@ -94,7 +96,7 @@ Interface intuitiva que transforma dados em insights acionáveis, gerando planos
 
 ```
 ┌─────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Início  │────▶│  Cadastro /   │────▶│  Mapa do      │────▶│  Análise IA   │
+│  Início │────▶│  Cadastro /   │────▶│  Mapa do      │────▶│  Análise IA   │
 │          │     │  Login        │     │  Perfil       │     │  (Background) │
 └─────────┘     └──────────────┘     └──────────────┘     └──────┬───────┘
                                                                   │
