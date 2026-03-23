@@ -29,7 +29,7 @@ Interface intuitiva que transforma dados em insights acionáveis, gerando planos
 
 ## Arquitetura do Sistema
 
-![Arquitetura do Sistema](estrutura.png)
+![Arquitetura do Sistema](/backend/docs/estrutura.png)
 
 ### Stack Tecnológica
 
