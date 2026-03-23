@@ -276,7 +276,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+frontend/docs/_build/
 
 # PyBuilder
 .pybuilder/
@@ -405,3 +405,9 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/intellij+iml,eclipse,java,python,linux,windows
 
 Explain
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local

@@ -1,0 +1,46 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+import { BrainCircuit } from 'lucide-vue-next'
+import GoogleLoginButton from '@/components/auth/GoogleLoginButton.vue'
+
+const auth = useAuthStore()
+const router = useRouter()
+const loading = ref(false)
+
+async function handleLogin() {
+  loading.value = true
+  try {
+    const { hasProfile } = await auth.login()
+    router.push(hasProfile ? '/home' : '/onboarding')
+  } catch {
+    loading.value = false
+  }
+}
+</script>
+
+<template>
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-100 px-4">
+    <div class="w-full max-w-sm text-center space-y-8">
+      <div class="space-y-2">
+        <div class="flex items-center justify-center gap-2">
+          <BrainCircuit class="w-10 h-10 text-indigo-600" />
+          <h1 class="text-3xl font-bold text-indigo-600">Mentoria.IA</h1>
+        </div>
+        <p class="text-gray-500 text-sm">
+          Sua carreira impulsionada por Inteligência Artificial
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-8 space-y-6">
+        <p class="text-gray-600 text-sm">
+          Faça login para começar seu plano de desenvolvimento personalizado.
+        </p>
+        <div class="flex justify-center">
+          <GoogleLoginButton :loading="loading" @click="handleLogin" />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
