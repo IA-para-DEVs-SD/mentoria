@@ -43,114 +43,54 @@ Interface intuitiva que transforma dados em insights acionáveis, gerando planos
 | Infra | Docker Compose em Droplet único | Tudo num só servidor, simples e barato para MVP |
 | CI/CD | GitHub Actions | Automação de deploy integrada ao repositório |
 
-### Diagrama de Arquitetura
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                  DigitalOcean — Droplet Único                     │
-│                     (Docker Compose)                              │
-│                                                                   │
-│  ┌──────────────────────────────────────────────────────────┐    │
-│  │  Nginx (container)                                        │    │
-│  │  - Reverse proxy (API + Frontend)                         │    │
-│  │  - SSL (Let's Encrypt / Certbot)                          │    │
-│  │  - Serve arquivos estáticos do Vue.js                     │    │
-│  └──────────┬──────────────────────────────┬────────────────┘    │
-│             │                              │                      │
-│             ▼                              ▼                      │
-│  ┌──────────────────┐          ┌──────────────────┐              │
-│  │  FastAPI (container)│          │  Worker (container)│              │
-│  │                    │          │                    │              │
-│  │  - Auth            │          │  - Análise IA      │              │
-│  │  - Perfil API      │          │  - Geração de      │              │
-│  │  - Roadmap API     │          │    Roadmaps        │              │
-│  │  - Chat (SSE)      │          │  - Atualização     │              │
-│  │  - WebSocket       │          │    de Mercado      │              │
-│  └────────┬───────────┘          └─────────┬──────────┘              │
-│           │                                │                      │
-│           ▼                                ▼                      │
-│  ┌──────────────────┐          ┌──────────────────┐              │
-│  │  PostgreSQL       │          │  Redis            │              │
-│  │  (container)      │          │  (container)      │              │
-│  │                   │          │                   │              │
-│  │  - Perfis         │          │  - Sessões        │              │
-│  │  - Roadmaps       │          │  - Cache LLM      │              │
-│  │  - Histórico      │          │  - Rate Limit     │              │
-│  └──────────────────┘          └──────────────────┘              │
-│                                                                   │
-└───────────────────────────────┬───────────────────────────────────┘
-                                │
-                                ▼
-                      ┌──────────────────┐
-                      │  Google Gemini    │
-                      │  (via PydanticAI) │
-                      │                   │
-                      │  - Análise perfil │
-                      │  - Tendências     │
-                      │  - Roadmap gen    │
-                      │  - Chat mentor    │
-                      └──────────────────┘
-```
-
 ### Fluxo de Interação do Usuário
 
-```
-┌─────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Início │────▶│  Cadastro /   │────▶│  Mapa do      │────▶│  Análise IA   │
-│          │     │  Login        │     │  Perfil       │     │  (Background) │
-└─────────┘     └──────────────┘     └──────────────┘     └──────┬───────┘
-                                                                  │
-                ┌──────────────┐     ┌──────────────┐            │
-                │  Acompanha-   │◀────│  Roadmap      │◀───────────┘
-                │  mento        │     │  Personalizado│
-                └──────┬───────┘     └──────────────┘
-                       │
-                       ▼
-                ┌──────────────┐     ┌──────────────┐
-                │  Chat com     │────▶│  Refinamento  │──── (ciclo contínuo)
-                │  Mentor IA    │     │  do Plano     │
-                └──────────────┘     └──────────────┘
-```
-
-#### Detalhamento do Fluxo
-
-```
-Usuário                    Frontend (Vue.js)           Backend (FastAPI)           Gemini (PydanticAI)
-  │                              │                           │                           │
-  │  1. Acessa plataforma        │                           │                           │
-  │─────────────────────────────▶│                           │                           │
-  │                              │                           │                           │
-  │  2. Preenche perfil          │                           │                           │
-  │  (experiência, skills,       │                           │                           │
-  │   objetivos, setor, região)  │                           │                           │
-  │─────────────────────────────▶│  3. POST /api/profile     │                           │
-  │                              │──────────────────────────▶│                           │
-  │                              │                           │  4. Valida e persiste     │
-  │                              │                           │                           │
-  │                              │                           │  5. Envia para análise    │
-  │                              │                           │──────────────────────────▶│
-  │                              │                           │                           │
-  │                              │                           │  6. Gemini analisa perfil │
-  │                              │                           │     + dados de mercado    │
-  │                              │                           │     + tendências          │
-  │                              │                           │◀──────────────────────────│
-  │                              │                           │                           │
-  │                              │  7. WebSocket: roadmap    │                           │
-  │  8. Visualiza roadmap        │◀──────────────────────────│                           │
-  │◀─────────────────────────────│                           │                           │
-  │                              │                           │                           │
-  │  9. Interage com chat IA     │                           │                           │
-  │─────────────────────────────▶│  10. POST /api/chat       │                           │
-  │                              │──────────────────────────▶│  11. Streaming response   │
-  │                              │                           │──────────────────────────▶│
-  │  12. Recebe resposta         │  13. SSE stream           │◀──────────────────────────│
-  │◀─────────────────────────────│◀──────────────────────────│                           │
-  │                              │                           │                           │
-  │  14. Acompanha progresso     │                           │                           │
-  │─────────────────────────────▶│  15. GET /api/progress    │                           │
-  │                              │──────────────────────────▶│                           │
-  │  16. Dashboard atualizado    │◀──────────────────────────│                           │
-  │◀─────────────────────────────│                           │                           │
+```mermaid
+flowchart TD
+    A[Usuário acessa plataforma] --> B[Login com Google]
+    
+    B --> C{Autenticado?}
+    C -- Não --> D[Exibir erro / retry]
+    
+    C -- Sim --> E[Verificar dados de perfil]
+    
+    E --> F{Perfil existe?}
+    
+    F -- Não --> G[Onboarding]
+    G --> H[Preencher dados em etapas]
+    H --> I[Enviar dados para IA]
+    I --> J[Gerar primeiro plano]
+    J --> K[Salvar plano]
+    K --> L[Ir para detalhes do plano]
+    
+    F -- Sim --> M[Ir para Home]
+    
+    M --> N{Ação do usuário}
+    
+    N -- Ver planos --> O[Listar planos]
+    O --> P[Selecionar plano]
+    P --> L
+    
+    N -- Gerar novo plano --> Q[Onboarding pré-preenchido]
+    Q --> R[Atualizar dados]
+    R --> I
+    
+    N -- Excluir plano --> S[Confirmar exclusão]
+    S --> T[Remover plano]
+    T --> M
+    
+    L --> U{Interações no plano}
+    
+    U -- Concluir ação --> V[Atualizar progresso]
+    U -- Excluir ação --> W[Remover ação + recalcular]
+    U -- Gerar novas ações --> X[Gerar novas ações via IA]
+    
+    V --> L
+    W --> L
+    X --> L
+    
+    L --> Y[Voltar para Home]
+    Y --> M
 ```
 
 ---
@@ -227,32 +167,61 @@ mentoria/
 
 ## Modelo de Dados Simplificado
 
-```
-┌──────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│    User       │     │    Profile        │     │    Roadmap        │
-├──────────────┤     ├──────────────────┤     ├──────────────────┤
-│ id           │──┐  │ id               │──┐  │ id               │
-│ email        │  └─▶│ user_id (FK)     │  └─▶│ profile_id (FK)  │
-│ password_hash│     │ nome             │     │ titulo           │
-│ created_at   │     │ experiencia      │     │ descricao        │
-└──────────────┘     │ habilidades[]    │     │ etapas (JSON)    │
-                     │ objetivos        │     │ cronograma       │
-                     │ setor            │     │ status           │
-                     │ regiao           │     │ created_at       │
-                     │ nivel            │     └──────────────────┘
-                     └──────────────────┘              │
-                                                       ▼
-                     ┌──────────────────┐     ┌──────────────────┐
-                     │  ChatHistory      │     │  RoadmapStep      │
-                     ├──────────────────┤     ├──────────────────┤
-                     │ id               │     │ id               │
-                     │ user_id (FK)     │     │ roadmap_id (FK)  │
-                     │ role             │     │ titulo           │
-                     │ content          │     │ descricao        │
-                     │ context (JSON)   │     │ prazo            │
-                     │ created_at       │     │ recursos[]       │
-                     └──────────────────┘     │ concluido        │
-                                              └──────────────────┘
+```mermaid
+erDiagram
+    User ||--o| Profile : tem
+    Profile ||--o{ Roadmap : gera
+    Roadmap ||--|{ RoadmapStep : contém
+    User ||--o{ ChatHistory : possui
+
+    User {
+        int id PK
+        string email
+        string password_hash
+        datetime created_at
+    }
+
+    Profile {
+        int id PK
+        int user_id FK
+        string nome
+        string experiencia
+        string[] habilidades
+        string objetivos
+        string setor
+        string regiao
+        string nivel
+    }
+
+    Roadmap {
+        int id PK
+        int profile_id FK
+        string titulo
+        string descricao
+        json etapas
+        string cronograma
+        string status
+        datetime created_at
+    }
+
+    ChatHistory {
+        int id PK
+        int user_id FK
+        string role
+        string content
+        json context
+        datetime created_at
+    }
+
+    RoadmapStep {
+        int id PK
+        int roadmap_id FK
+        string titulo
+        string descricao
+        string prazo
+        string[] recursos
+        boolean concluido
+    }
 ```
 
 ## Como Rodar Localmente
