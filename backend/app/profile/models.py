@@ -1,5 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
+
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 from sqlalchemy import Column, Date, DateTime, ForeignKey, JSON, String
 from sqlalchemy.orm import relationship
@@ -15,8 +19,8 @@ class Profile(Base):
     user_id = Column(UUID(), ForeignKey("users.id"), unique=True, nullable=False)
     career_goal = Column(String, nullable=True)
     skills = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
 
     user = relationship("User", back_populates="profile")
     experiences = relationship("Experience", back_populates="profile", cascade="all, delete-orphan")

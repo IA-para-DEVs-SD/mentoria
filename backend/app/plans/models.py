@@ -1,5 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
+
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -15,7 +19,7 @@ class Plan(Base):
     user_id = Column(UUID(), ForeignKey("users.id"), nullable=False)
     name = Column(String, nullable=False)
     progress = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
 
     user = relationship("User", back_populates="plans")
     actions = relationship("Action", back_populates="plan", cascade="all, delete-orphan")
@@ -56,4 +60,4 @@ class Rejection(Base):
     user_id = Column(UUID(), ForeignKey("users.id"), nullable=False)
     category = Column(String, nullable=False)
     action_title = Column(String, nullable=False)
-    rejected_at = Column(DateTime, default=datetime.utcnow)
+    rejected_at = Column(DateTime, default=utc_now)

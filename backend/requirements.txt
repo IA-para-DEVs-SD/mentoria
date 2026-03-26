@@ -13,3 +13,4 @@ pytest
 hypothesis
 pytest-asyncio
 fakeredis
+pytest-cov

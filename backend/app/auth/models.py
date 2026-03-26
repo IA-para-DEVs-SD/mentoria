@@ -1,5 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
+
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
@@ -37,7 +41,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     photo_url = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
 
     profile = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     plans = relationship("Plan", back_populates="user")
