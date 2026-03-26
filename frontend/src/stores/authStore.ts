@@ -1,24 +1,22 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { authService } from '@/services/authService'
-import { useProfileStore } from '@/stores/profileStore'
 import type { User } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
-  const savedUser = localStorage.getItem('user')
-  const user = ref<User | null>(savedUser ? JSON.parse(savedUser) : null)
+  const user = ref<User | null>(null)
   const token = ref<string | null>(localStorage.getItem('token'))
 
-  const isAuthenticated = computed(() => !!token.value && !!user.value)
+  const isAuthenticated = computed(() => !!token.value)
 
-  async function login(): Promise<{ hasProfile: boolean }> {
-    const result = await authService.loginWithGoogle()
-    user.value = result.user
-    token.value = result.token
+  function loginRedirect() {
+    authService.loginWithGoogle()
+  }
 
-    const profileStore = useProfileStore()
-    await profileStore.loadProfile()
-    return { hasProfile: !!profileStore.profile }
+  function handleCallback(accessToken: string, hasProfile: boolean): boolean {
+    localStorage.setItem('token', accessToken)
+    token.value = accessToken
+    return hasProfile
   }
 
   function logout() {
@@ -27,5 +25,5 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
   }
 
-  return { user, token, isAuthenticated, login, logout }
+  return { user, token, isAuthenticated, loginRedirect, handleCallback, logout }
 })

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { ProfileData } from '@/types'
+import type { ProfileForm, Seniority, EducationLevel, CareerGoal } from '@/types'
+import { SENIORITY_LABELS, EDUCATION_LEVEL_LABELS, CAREER_GOAL_LABELS } from '@/types'
 import Chip from 'primevue/chip'
 import { ClipboardCheck } from 'lucide-vue-next'
 
 defineProps<{
-  profile: ProfileData
+  profile: ProfileForm
 }>()
 
 function formatMonth(d: Date | null | undefined): string {
@@ -29,40 +30,40 @@ function formatFull(d: Date | null | undefined): string {
     <div class="space-y-2">
       <h4 class="font-medium text-gray-700">Trajetória Profissional</h4>
       <div
-        v-for="(exp, i) in profile.experiencias"
+        v-for="(exp, i) in profile.experiences"
         :key="i"
         class="bg-white border border-gray-200 rounded-lg p-3 text-sm space-y-1"
       >
-        <p class="font-medium">{{ exp.cargo }} — {{ exp.senioridade }}</p>
-        <p v-if="exp.empresa" class="text-gray-500">{{ exp.empresa }}</p>
-        <p class="text-gray-400">{{ formatMonth(exp.dataInicio) }} — {{ formatMonth(exp.dataFim) }}</p>
+        <p class="font-medium">{{ exp.role }} — {{ exp.seniority ? SENIORITY_LABELS[exp.seniority as Seniority] : '' }}</p>
+        <p v-if="exp.company" class="text-gray-500">{{ exp.company }}</p>
+        <p class="text-gray-400">{{ formatMonth(exp.start_date) }} — {{ formatMonth(exp.end_date) }}</p>
       </div>
     </div>
 
     <div class="space-y-2">
       <h4 class="font-medium text-gray-700">Formação Acadêmica</h4>
       <div
-        v-for="(form, i) in profile.formacoes"
+        v-for="(form, i) in profile.educations"
         :key="i"
         class="bg-white border border-gray-200 rounded-lg p-3 text-sm space-y-1"
       >
-        <p class="font-medium">{{ form.titulo }} — {{ form.nivel }}</p>
-        <p class="text-gray-500">{{ form.instituicao }} · {{ form.areaEstudo }}</p>
-        <p class="text-gray-400">{{ formatFull(form.dataInicio) }} — {{ formatFull(form.dataFim) }}</p>
+        <p class="font-medium">{{ form.title }} — {{ form.level ? EDUCATION_LEVEL_LABELS[form.level as EducationLevel] : '' }}</p>
+        <p class="text-gray-500">{{ form.institution }} · {{ form.study_area }}</p>
+        <p class="text-gray-400">{{ formatFull(form.start_date) }} — {{ formatFull(form.end_date) }}</p>
       </div>
     </div>
 
     <div class="space-y-2">
       <h4 class="font-medium text-gray-700">Habilidades</h4>
       <div class="flex flex-wrap gap-2">
-        <Chip v-for="h in profile.habilidades" :key="h" :label="h" />
+        <Chip v-for="h in profile.skills" :key="h" :label="h" />
       </div>
     </div>
 
     <div class="space-y-2">
       <h4 class="font-medium text-gray-700">Objetivo de Carreira</h4>
       <p class="text-sm bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg inline-block">
-        {{ profile.objetivo }}
+        {{ profile.career_goal ? CAREER_GOAL_LABELS[profile.career_goal as CareerGoal] : '' }}
       </p>
     </div>
   </div>

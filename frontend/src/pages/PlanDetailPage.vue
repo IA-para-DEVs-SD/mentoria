@@ -11,6 +11,7 @@ import PlanHeader from '@/components/plan/PlanHeader.vue'
 import ProgressCard from '@/components/plan/ProgressCard.vue'
 import GapsList from '@/components/plan/GapsList.vue'
 import ActionTimeline from '@/components/plan/ActionTimeline.vue'
+import type { ActionStatus } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -30,12 +31,15 @@ onMounted(async () => {
 
 function handleToggle(actionId: string) {
   if (!currentPlan.value) return
-  plansStore.toggleAction(currentPlan.value.id, actionId)
+  const action = currentPlan.value.actions.find((a) => a.id === actionId)
+  if (!action) return
+  const newStatus: ActionStatus = action.status === 'pendente' ? 'concluida' : 'pendente'
+  plansStore.updateActionStatus(currentPlan.value.id, actionId, newStatus)
 }
 
 function handleDelete(actionId: string) {
   if (!currentPlan.value) return
-  if (currentPlan.value.acoes.length <= 1) {
+  if (currentPlan.value.actions.length <= 1) {
     toast.add({ severity: 'warn', summary: 'Ação bloqueada', detail: 'Seu plano precisa ter pelo menos uma ação.', life: 3000 })
     return
   }
@@ -72,16 +76,16 @@ async function handleGenerateMore() {
 
 <template>
   <DefaultLayout>
-    <div v-if="currentPlan && authStore.user" class="w-full max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
+    <div v-if="currentPlan" class="w-full max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
       <PlanHeader
         :plan="currentPlan"
         :user="authStore.user"
         @back="router.push('/home')"
       />
-      <ProgressCard :progresso="currentPlan.progresso" />
+      <ProgressCard :progress="currentPlan.progress" />
       <GapsList :gaps="currentPlan.gaps" />
       <ActionTimeline
-        :acoes="currentPlan.acoes"
+        :actions="currentPlan.actions"
         :generating-more="generatingMore"
         @toggle="handleToggle"
         @delete="handleDelete"

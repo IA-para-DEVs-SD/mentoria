@@ -19,7 +19,7 @@ async function generate() {
     return
   }
   try {
-    const plan = await plansStore.generatePlan(profileStore.profile)
+    const plan = await plansStore.generatePlan()
     router.replace(`/plan/${plan.id}`)
   } catch {
     // error is set in store

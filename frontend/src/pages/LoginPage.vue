@@ -1,23 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { BrainCircuit } from 'lucide-vue-next'
 import GoogleLoginButton from '@/components/auth/GoogleLoginButton.vue'
 
 const auth = useAuthStore()
-const router = useRouter()
-const loading = ref(false)
-
-async function handleLogin() {
-  loading.value = true
-  try {
-    const { hasProfile } = await auth.login()
-    router.push(hasProfile ? '/home' : '/onboarding')
-  } catch {
-    loading.value = false
-  }
-}
 </script>
 
 <template>
@@ -38,7 +24,7 @@ async function handleLogin() {
           Faça login para começar seu plano de desenvolvimento personalizado.
         </p>
         <div class="flex justify-center">
-          <GoogleLoginButton :loading="loading" @click="handleLogin" />
+          <GoogleLoginButton @click="auth.loginRedirect()" />
         </div>
       </div>
     </div>

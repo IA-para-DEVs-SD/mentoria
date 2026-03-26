@@ -1,24 +1,58 @@
+// Alinhado com backend: plans/schemas.py
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+export type ActionStatus = 'pendente' | 'concluida'
+
+export type Priority = 'ALTA' | 'MEDIA' | 'BAIXA'
+
+// ---------------------------------------------------------------------------
+// Tipos de API
+// ---------------------------------------------------------------------------
+
 export interface Gap {
-  skill: string
-  level: string
-  ideal: string
+  id: string
+  description: string
+  relevance: number
 }
 
 export interface Action {
   id: string
-  prioridade: 'ALTA' | 'MÉDIA' | 'BAIXA'
-  categoria: string
-  titulo: string
-  objetivo: string
-  contexto: string
-  concluida: boolean
+  priority: Priority
+  category: string
+  title: string
+  objective: string
+  context: string
+  status: ActionStatus
+  sequence: number
 }
 
 export interface Plan {
   id: string
-  titulo: string
-  criadoEm: string
+  name: string
+  created_at: string
+  progress: number
   gaps: Gap[]
-  acoes: Action[]
-  progresso: number
+  actions: Action[]
+}
+
+export interface PlanSummary {
+  id: string
+  name: string
+  created_at: string
+  progress: number
+}
+
+// ---------------------------------------------------------------------------
+// Input schemas
+// ---------------------------------------------------------------------------
+
+export interface ActionStatusUpdate {
+  status: ActionStatus
+}
+
+export interface ProgressOut {
+  progress: number
 }

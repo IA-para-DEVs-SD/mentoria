@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import type { Experiencia, Senioridade } from '@/types'
+import type { ExperienceForm } from '@/types'
+import { SENIORITY_LABELS } from '@/types'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
 import { Briefcase, X } from 'lucide-vue-next'
 
-const model = defineModel<Experiencia[]>({ required: true })
+const model = defineModel<ExperienceForm[]>({ required: true })
 
-const SENIORIDADES: Senioridade[] = [
-  'Estágio', 'Júnior', 'Pleno', 'Sênior', 'Especialista', 'Liderança',
-]
+const SENIORITY_OPTIONS = Object.entries(SENIORITY_LABELS).map(([value, label]) => ({ label, value }))
 
-function addExperiencia() {
-  model.value.push({ cargo: '', senioridade: null, empresa: '', dataInicio: null, dataFim: null })
+function addExperience() {
+  model.value.push({ role: '', seniority: null, company: '', start_date: null, end_date: null })
 }
 
-function removeExperiencia(index: number) {
+function removeExperience(index: number) {
   model.value.splice(index, 1)
 }
 
-if (model.value.length === 0) addExperiencia()
+if (model.value.length === 0) addExperience()
 </script>
 
 <template>
@@ -38,7 +37,7 @@ if (model.value.length === 0) addExperiencia()
         v-if="model.length > 1"
         type="button"
         class="absolute top-3 right-3 text-gray-400 hover:text-red-500"
-        @click="removeExperiencia(i)"
+        @click="removeExperience(i)"
         :aria-label="`Remover experiência ${i + 1}`"
       >
         <X class="w-4 h-4" />
@@ -47,13 +46,15 @@ if (model.value.length === 0) addExperiencia()
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Cargo *</label>
-          <InputText v-model="exp.cargo" placeholder="Ex: Desenvolvedor Frontend" class="w-full" />
+          <InputText v-model="exp.role" placeholder="Ex: Desenvolvedor Frontend" class="w-full" />
         </div>
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Senioridade *</label>
           <Select
-            v-model="exp.senioridade"
-            :options="SENIORIDADES"
+            v-model="exp.seniority"
+            :options="SENIORITY_OPTIONS"
+            optionLabel="label"
+            optionValue="value"
             placeholder="Selecione o nível"
             class="w-full"
           />
@@ -62,14 +63,14 @@ if (model.value.length === 0) addExperiencia()
 
       <div class="space-y-1">
         <label class="text-sm font-medium text-gray-700">Empresa</label>
-        <InputText v-model="exp.empresa" placeholder="Ex: Empresa XYZ" class="w-full" />
+        <InputText v-model="exp.company" placeholder="Ex: Empresa XYZ" class="w-full" />
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Data de Início *</label>
           <DatePicker
-            v-model="exp.dataInicio"
+            v-model="exp.start_date"
             view="month"
             dateFormat="mm/yy"
             placeholder="MM/AAAA"
@@ -80,11 +81,11 @@ if (model.value.length === 0) addExperiencia()
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Data de Fim</label>
           <DatePicker
-            v-model="exp.dataFim"
+            v-model="exp.end_date"
             view="month"
             dateFormat="mm/yy"
             placeholder="Vazio = atual"
-            :minDate="exp.dataInicio ?? undefined"
+            :minDate="exp.start_date ?? undefined"
             :maxDate="new Date()"
             class="w-full"
           />
@@ -98,7 +99,7 @@ if (model.value.length === 0) addExperiencia()
       severity="secondary"
       outlined
       size="small"
-      @click="addExperiencia"
+      @click="addExperience"
     />
   </div>
 </template>

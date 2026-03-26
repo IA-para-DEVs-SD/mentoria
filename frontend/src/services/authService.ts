@@ -1,28 +1,13 @@
-import type { User } from '@/types'
+// TODO: requer ajuste no backend para redirecionar para o frontend com token na URL
 
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export const authService = {
-  async loginWithGoogle(): Promise<{ user: User; token: string }> {
-    await delay(800)
-    const user: User = {
-      id: 'google-12345',
-      name: 'Alex Silva',
-      email: 'alex.silva@email.com',
-      photo: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
-    }
-    const token = 'mock-jwt-token-xyz'
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-    return { user, token }
-  },
-
-  async refreshToken(): Promise<string> {
-    return 'mock-refreshed-token'
+  loginWithGoogle(): void {
+    window.location.href = `${API_BASE_URL}/auth/google/login`
   },
 
   logout(): void {
     localStorage.removeItem('token')
-    localStorage.removeItem('user')
   },
 }

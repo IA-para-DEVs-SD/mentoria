@@ -5,12 +5,14 @@ import { ChevronLeft } from 'lucide-vue-next'
 
 defineProps<{
   plan: Plan
-  user: User
+  user: User | null
 }>()
 
 defineEmits<{
   back: []
 }>()
+
+const PLACEHOLDER_AVATAR = 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'
 </script>
 
 <template>
@@ -22,10 +24,14 @@ defineEmits<{
     >
       <ChevronLeft class="w-5 h-5" />
     </button>
-    <img :src="user.photo" :alt="user.name" class="w-10 h-10 rounded-full border-2 border-white shadow" />
+    <img
+      :src="user?.photo_url ?? PLACEHOLDER_AVATAR"
+      :alt="user?.name ?? 'Usuário'"
+      class="w-10 h-10 rounded-full border-2 border-white shadow"
+    />
     <div class="min-w-0">
-      <h2 class="font-bold text-lg truncate">{{ plan.titulo }}</h2>
-      <p class="text-xs text-gray-500">{{ user.name }}</p>
+      <h2 class="font-bold text-lg truncate">{{ plan.name }}</h2>
+      <p class="text-xs text-gray-500">{{ user?.name ?? '' }}</p>
     </div>
   </div>
 </template>

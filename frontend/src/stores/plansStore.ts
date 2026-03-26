@@ -1,10 +1,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { planService } from '@/services/planService'
-import type { Plan, ProfileData } from '@/types'
+import type { Plan, PlanSummary, ActionStatus } from '@/types'
 
 export const usePlansStore = defineStore('plans', () => {
-  const plans = ref<Plan[]>([])
+  const plans = ref<PlanSummary[]>([])
   const currentPlan = ref<Plan | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -14,15 +14,14 @@ export const usePlansStore = defineStore('plans', () => {
   }
 
   async function loadPlan(id: string) {
-    currentPlan.value = (await planService.getPlanById(id)) ?? null
+    currentPlan.value = await planService.getPlanById(id)
   }
 
-  async function generatePlan(profile: ProfileData) {
+  async function generatePlan() {
     loading.value = true
     error.value = null
     try {
-      const plan = await planService.generatePlan(profile)
-      plans.value.unshift(plan)
+      const plan = await planService.generatePlan()
       currentPlan.value = plan
       return plan
     } catch {
@@ -38,19 +37,22 @@ export const usePlansStore = defineStore('plans', () => {
     plans.value = plans.value.filter((p) => p.id !== id)
   }
 
-  async function toggleAction(planId: string, actionId: string) {
-    const updated = await planService.toggleAction(planId, actionId)
-    if (updated) currentPlan.value = updated
+  async function updateActionStatus(planId: string, actionId: string, status: ActionStatus) {
+    await planService.updateActionStatus(planId, actionId, status)
+    await loadPlan(planId)
   }
 
   async function deleteAction(planId: string, actionId: string) {
-    const updated = await planService.deleteAction(planId, actionId)
-    if (updated) currentPlan.value = updated
+    const { progress } = await planService.deleteAction(planId, actionId)
+    if (currentPlan.value && currentPlan.value.id === planId) {
+      currentPlan.value.actions = currentPlan.value.actions.filter((a) => a.id !== actionId)
+      currentPlan.value.progress = progress
+    }
   }
 
   async function generateMoreActions(planId: string) {
-    const updated = await planService.generateMoreActions(planId)
-    if (updated) currentPlan.value = updated
+    await planService.generateMoreActions(planId)
+    await loadPlan(planId)
   }
 
   return {
@@ -62,7 +64,7 @@ export const usePlansStore = defineStore('plans', () => {
     loadPlan,
     generatePlan,
     deletePlan,
-    toggleAction,
+    updateActionStatus,
     deleteAction,
     generateMoreActions,
   }

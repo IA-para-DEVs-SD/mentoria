@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { profileService } from '@/services/profileService'
-import type { ProfileData } from '@/types'
+import type { ProfileData, ProfileOut } from '@/types'
 
 export const useProfileStore = defineStore('profile', () => {
-  const profile = ref<ProfileData | null>(null)
+  const profile = ref<ProfileOut | null>(null)
 
   const hasProfile = computed(() => !!profile.value)
 

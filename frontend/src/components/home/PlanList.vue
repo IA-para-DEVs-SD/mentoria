@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Plan } from '@/types'
+import type { PlanSummary } from '@/types'
 import PlanCard from './PlanCard.vue'
 
 defineProps<{
-  plans: Plan[]
+  plans: PlanSummary[]
 }>()
 
 defineEmits<{

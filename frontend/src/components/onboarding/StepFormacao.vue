@@ -1,27 +1,25 @@
 <script setup lang="ts">
-import type { Formacao, NivelFormacao } from '@/types'
+import type { EducationForm } from '@/types'
+import { EDUCATION_LEVEL_LABELS } from '@/types'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
 import { GraduationCap, X } from 'lucide-vue-next'
 
-const model = defineModel<Formacao[]>({ required: true })
+const model = defineModel<EducationForm[]>({ required: true })
 
-const NIVEIS: NivelFormacao[] = [
-  'Ensino Médio', 'Técnico', 'Tecnólogo', 'Bacharelado', 'Licenciatura',
-  'Pós-graduação', 'MBA', 'Mestrado', 'Doutorado', 'Pós-doutorado',
-]
+const EDUCATION_LEVEL_OPTIONS = Object.entries(EDUCATION_LEVEL_LABELS).map(([value, label]) => ({ label, value }))
 
-function addFormacao() {
-  model.value.push({ instituicao: '', nivel: null, titulo: '', areaEstudo: '', dataInicio: null, dataFim: null })
+function addEducation() {
+  model.value.push({ institution: '', level: null, title: '', study_area: '', start_date: null, end_date: null })
 }
 
-function removeFormacao(index: number) {
+function removeEducation(index: number) {
   model.value.splice(index, 1)
 }
 
-if (model.value.length === 0) addFormacao()
+if (model.value.length === 0) addEducation()
 </script>
 
 <template>
@@ -39,7 +37,7 @@ if (model.value.length === 0) addFormacao()
         v-if="model.length > 1"
         type="button"
         class="absolute top-3 right-3 text-gray-400 hover:text-red-500"
-        @click="removeFormacao(i)"
+        @click="removeEducation(i)"
         :aria-label="`Remover formação ${i + 1}`"
       >
         <X class="w-4 h-4" />
@@ -48,13 +46,15 @@ if (model.value.length === 0) addFormacao()
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Instituição *</label>
-          <InputText v-model="form.instituicao" placeholder="Ex: USP" class="w-full" />
+          <InputText v-model="form.institution" placeholder="Ex: USP" class="w-full" />
         </div>
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Nível de Formação *</label>
           <Select
-            v-model="form.nivel"
-            :options="NIVEIS"
+            v-model="form.level"
+            :options="EDUCATION_LEVEL_OPTIONS"
+            optionLabel="label"
+            optionValue="value"
             placeholder="Selecione o nível"
             class="w-full"
           />
@@ -64,11 +64,11 @@ if (model.value.length === 0) addFormacao()
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Título da Formação *</label>
-          <InputText v-model="form.titulo" placeholder="Ex: Ciência da Computação" class="w-full" />
+          <InputText v-model="form.title" placeholder="Ex: Ciência da Computação" class="w-full" />
         </div>
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Área de Estudo *</label>
-          <InputText v-model="form.areaEstudo" placeholder="Ex: Tecnologia" class="w-full" />
+          <InputText v-model="form.study_area" placeholder="Ex: Tecnologia" class="w-full" />
         </div>
       </div>
 
@@ -76,7 +76,7 @@ if (model.value.length === 0) addFormacao()
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Data de Início *</label>
           <DatePicker
-            v-model="form.dataInicio"
+            v-model="form.start_date"
             dateFormat="dd/mm/yy"
             placeholder="DD/MM/AAAA"
             :maxDate="new Date()"
@@ -86,10 +86,10 @@ if (model.value.length === 0) addFormacao()
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Data de Fim</label>
           <DatePicker
-            v-model="form.dataFim"
+            v-model="form.end_date"
             dateFormat="dd/mm/yy"
             placeholder="Vazio = em andamento"
-            :minDate="form.dataInicio ?? undefined"
+            :minDate="form.start_date ?? undefined"
             class="w-full"
           />
         </div>
@@ -102,7 +102,7 @@ if (model.value.length === 0) addFormacao()
       severity="secondary"
       outlined
       size="small"
-      @click="addFormacao"
+      @click="addEducation"
     />
   </div>
 </template>

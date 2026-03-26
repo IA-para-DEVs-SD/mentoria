@@ -1,25 +1,25 @@
 import { ref, computed } from 'vue'
-import type { ProfileData } from '@/types'
+import type { ProfileForm } from '@/types'
 
 const STEPS = ['1', '2', '3', '4', '5']
 
-export function useOnboarding(profile: ProfileData) {
+export function useOnboarding(profile: ProfileForm) {
   const currentStep = ref('1')
 
   function isStepValid(step: string): boolean {
     switch (step) {
       case '1':
-        return profile.experiencias.length > 0 && profile.experiencias.every((e) =>
-          e.cargo.trim() !== '' && e.senioridade !== null && e.dataInicio !== null
+        return profile.experiences.length > 0 && profile.experiences.every((e) =>
+          e.role.trim() !== '' && e.seniority !== null && e.start_date !== null
         )
       case '2':
-        return profile.formacoes.length > 0 && profile.formacoes.every((f) =>
-          f.instituicao.trim() !== '' && f.nivel !== null && f.titulo.trim() !== '' && f.areaEstudo.trim() !== '' && f.dataInicio !== null
+        return profile.educations.length > 0 && profile.educations.every((f) =>
+          f.institution.trim() !== '' && f.level !== null && f.title.trim() !== '' && f.study_area.trim() !== '' && f.start_date !== null
         )
       case '3':
-        return profile.habilidades.length > 0
+        return profile.skills.length > 0
       case '4':
-        return profile.objetivo !== null
+        return profile.career_goal !== null
       case '5':
         return isStepValid('1') && isStepValid('2') && isStepValid('3') && isStepValid('4')
       default:

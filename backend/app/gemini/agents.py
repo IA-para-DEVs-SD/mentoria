@@ -11,7 +11,7 @@ from app.gemini.schemas import GeminiActionItem, GeminiPlanResponse
 
 os.environ.setdefault("GEMINI_API_KEY", settings.GEMINI_API_KEY)
 
-_model = GeminiModel("gemini-2.0-flash")
+_model = GeminiModel("gemini-2.5-flash")
 
 
 class ActionsResponse(BaseModel):

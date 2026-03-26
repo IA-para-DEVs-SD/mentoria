@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { ObjetivoCarreira } from '@/types'
+import type { CareerGoal } from '@/types'
+import { CAREER_GOAL_LABELS } from '@/types'
 import { Target } from 'lucide-vue-next'
 
-const model = defineModel<ObjetivoCarreira | null>({ required: true })
+const model = defineModel<CareerGoal | null>({ required: true })
 
-const OBJETIVOS: { value: ObjetivoCarreira; label: string; icon: string }[] = [
-  { value: 'Crescer na carreira atual', label: 'Crescer na carreira atual', icon: '📈' },
-  { value: 'Assumir cargos de liderança', label: 'Assumir cargos de liderança', icon: '👥' },
-  { value: 'Mudar de área', label: 'Mudar de área', icon: '🔄' },
+const GOALS: { value: CareerGoal; label: string; icon: string }[] = [
+  { value: 'Crescer_na_carreira_atual', label: CAREER_GOAL_LABELS['Crescer_na_carreira_atual'], icon: '📈' },
+  { value: 'Assumir_cargos_de_lideranca', label: CAREER_GOAL_LABELS['Assumir_cargos_de_lideranca'], icon: '👥' },
+  { value: 'Mudar_de_area', label: CAREER_GOAL_LABELS['Mudar_de_area'], icon: '🔄' },
 ]
 </script>
 
@@ -21,7 +22,7 @@ const OBJETIVOS: { value: ObjetivoCarreira; label: string; icon: string }[] = [
 
     <div class="grid grid-cols-1 gap-3">
       <button
-        v-for="obj in OBJETIVOS"
+        v-for="obj in GOALS"
         :key="obj.value"
         type="button"
         :class="[

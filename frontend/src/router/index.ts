@@ -11,6 +11,11 @@ const router = createRouter({
       component: LoginPage,
     },
     {
+      path: '/auth/callback',
+      name: 'auth-callback',
+      component: () => import('@/pages/AuthCallbackPage.vue'),
+    },
+    {
       path: '/home',
       name: 'home',
       component: () => import('@/pages/HomePage.vue'),
@@ -33,10 +38,12 @@ const router = createRouter({
   ],
 })
 
+const publicRoutes = ['/', '/auth/callback']
+
 router.beforeEach((to) => {
   const auth = useAuthStore()
 
-  if (to.path !== '/' && !auth.isAuthenticated) {
+  if (!publicRoutes.includes(to.path) && !auth.isAuthenticated) {
     return '/'
   }
 

@@ -16,6 +16,17 @@ _profile_service = ProfileService()
 _PLAN_NOT_FOUND = "Plano não encontrado."
 _ACTION_NOT_FOUND = "Ação não encontrada."
 
+_PRIORITY_NORMALIZE = {
+    "ALTA": "ALTA",
+    "MEDIA": "MEDIA",
+    "MÉDIA": "MEDIA",
+    "BAIXA": "BAIXA",
+}
+
+
+def _normalize_priority(value: str) -> str:
+    return _PRIORITY_NORMALIZE.get(value.strip().upper(), "MEDIA")
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -85,7 +96,7 @@ class PlanService:
             for action_item in gemini_response.actions:
                 action = Action(
                     plan_id=plan.id,
-                    priority=action_item.priority,
+                    priority=_normalize_priority(action_item.priority),
                     category=action_item.category,
                     title=action_item.title,
                     objective=action_item.objective,
@@ -212,7 +223,7 @@ class PlanService:
         for item in new_action_items:
             action = Action(
                 plan_id=plan.id,
-                priority=item.priority,
+                priority=_normalize_priority(item.priority),
                 category=item.category,
                 title=item.title,
                 objective=item.objective,

@@ -16,7 +16,7 @@ import StepFormacao from '@/components/onboarding/StepFormacao.vue'
 import StepHabilidades from '@/components/onboarding/StepHabilidades.vue'
 import StepObjetivo from '@/components/onboarding/StepObjetivo.vue'
 import StepRevisao from '@/components/onboarding/StepRevisao.vue'
-import type { ProfileData } from '@/types'
+import type { ProfileForm, ProfileData, CareerGoal } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,16 +24,65 @@ const profileStore = useProfileStore()
 
 const isNewPlan = computed(() => route.query.mode === 'new-plan')
 
-const profile = reactive<ProfileData>(
-  profileStore.profile
-    ? JSON.parse(JSON.stringify(profileStore.profile))
-    : { experiencias: [], formacoes: [], habilidades: [], objetivo: null as ProfileData['objetivo'] }
-)
+function buildInitialForm(): ProfileForm {
+  const p = profileStore.profile
+  if (!p) {
+    return { experiences: [], educations: [], skills: [], career_goal: null }
+  }
+  return {
+    experiences: p.experiences.map((e) => ({
+      role: e.role,
+      seniority: e.seniority,
+      company: e.company ?? '',
+      start_date: new Date(e.start_date),
+      end_date: e.end_date ? new Date(e.end_date) : null,
+    })),
+    educations: p.educations.map((ed) => ({
+      institution: ed.institution,
+      level: ed.level,
+      title: ed.title,
+      study_area: ed.study_area,
+      start_date: new Date(ed.start_date),
+      end_date: ed.end_date ? new Date(ed.end_date) : null,
+    })),
+    skills: [...p.skills],
+    career_goal: p.career_goal,
+  }
+}
+
+const profile = reactive<ProfileForm>(buildInitialForm())
 
 const { currentStep, canAdvance, nextStep, prevStep } = useOnboarding(profile)
 
+function formatDate(d: Date | null): string | null {
+  if (!d) return null
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 async function handleFinish() {
-  await profileStore.saveProfile({ ...profile } as ProfileData)
+  const data: ProfileData = {
+    experiences: profile.experiences.map((e) => ({
+      role: e.role,
+      seniority: e.seniority!,
+      company: e.company || null,
+      start_date: formatDate(e.start_date)!,
+      end_date: formatDate(e.end_date),
+    })),
+    educations: profile.educations.map((ed) => ({
+      institution: ed.institution,
+      level: ed.level!,
+      title: ed.title,
+      study_area: ed.study_area,
+      start_date: formatDate(ed.start_date)!,
+      end_date: formatDate(ed.end_date),
+    })),
+    skills: profile.skills,
+    career_goal: profile.career_goal as CareerGoal,
+  }
+  await profileStore.saveProfile(data)
   router.push('/loading')
 }
 </script>
@@ -53,16 +102,16 @@ async function handleFinish() {
         </StepList>
         <StepPanels>
           <StepPanel value="1">
-            <StepTrajetoria v-model="profile.experiencias" />
+            <StepTrajetoria v-model="profile.experiences" />
           </StepPanel>
           <StepPanel value="2">
-            <StepFormacao v-model="profile.formacoes" />
+            <StepFormacao v-model="profile.educations" />
           </StepPanel>
           <StepPanel value="3">
-            <StepHabilidades v-model="profile.habilidades" />
+            <StepHabilidades v-model="profile.skills" />
           </StepPanel>
           <StepPanel value="4">
-            <StepObjetivo v-model="profile.objetivo" />
+            <StepObjetivo v-model="profile.career_goal" />
           </StepPanel>
           <StepPanel value="5">
             <StepRevisao :profile="profile" />

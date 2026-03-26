@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import { Target } from 'lucide-vue-next'
 
 defineProps<{
-  acoes: Action[]
+  actions: Action[]
   generatingMore?: boolean
 }>()
 
@@ -23,12 +23,12 @@ defineEmits<{
     </h3>
 
     <div class="relative space-y-3 pl-5 before:absolute before:left-[9px] before:top-3 before:bottom-3 before:w-0.5 before:bg-gray-200">
-      <div v-for="acao in acoes" :key="acao.id" class="relative">
+      <div v-for="action in actions" :key="action.id" class="relative">
         <div class="absolute -left-5 top-5 w-2.5 h-2.5 rounded-full border-2 border-indigo-400 bg-white z-10" />
         <ActionItem
-          :action="acao"
-          @toggle="$emit('toggle', acao.id)"
-          @delete="$emit('delete', acao.id)"
+          :action="action"
+          @toggle="$emit('toggle', action.id)"
+          @delete="$emit('delete', action.id)"
         />
       </div>
     </div>
