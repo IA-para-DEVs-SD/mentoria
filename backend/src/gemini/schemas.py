@@ -1,4 +1,12 @@
-from pydantic import BaseModel
+import unicodedata
+
+from pydantic import BaseModel, field_validator
+
+
+def _normalize_priority(v: str) -> str:
+    """Remove acentos e converte para maiúsculas."""
+    nfkd = unicodedata.normalize("NFKD", v)
+    return "".join(c for c in nfkd if not unicodedata.combining(c)).upper()
 
 
 class GeminiActionItem(BaseModel):
@@ -8,6 +16,11 @@ class GeminiActionItem(BaseModel):
     objective: str
     context: str
     sequence: int
+
+    @field_validator("priority", mode="before")
+    @classmethod
+    def normalize_priority(cls, v: str) -> str:
+        return _normalize_priority(v)
 
 
 class GeminiGapItem(BaseModel):

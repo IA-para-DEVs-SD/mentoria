@@ -4,14 +4,18 @@ import os
 
 from pydantic import BaseModel
 from pydantic_ai import Agent
-from pydantic_ai.models.gemini import GeminiModel
+from pydantic_ai.models.google import GoogleModel, GoogleModelName
+from pydantic_ai.providers.google import GoogleProvider
 
 from src.config import settings
 from src.gemini.schemas import GeminiActionItem, GeminiPlanResponse
 
 os.environ.setdefault("GEMINI_API_KEY", settings.GEMINI_API_KEY)
 
-_model = GeminiModel("gemini-2.5-flash")
+_model = GoogleModel(
+    "gemini-2.5-flash",
+    provider=GoogleProvider(api_key=settings.GEMINI_API_KEY),
+)
 
 
 class ActionsResponse(BaseModel):
