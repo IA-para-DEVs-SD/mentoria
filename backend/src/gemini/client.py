@@ -8,9 +8,11 @@ from typing import TYPE_CHECKING
 
 from fastapi import HTTPException
 
-from src.gemini.agents import actions_agent, roadmap_agent
-from src.gemini.prompts import build_actions_prompt, build_plan_prompt
-from src.gemini.schemas import GeminiActionItem, GeminiPlanResponse
+logger = logging.getLogger(__name__)
+
+from app.gemini.agents import actions_agent, roadmap_agent
+from app.gemini.prompts import build_actions_prompt, build_plan_prompt
+from app.gemini.schemas import GeminiActionItem, GeminiPlanResponse
 
 if TYPE_CHECKING:
     from src.plans.models import Action, Rejection
@@ -35,16 +37,10 @@ class GeminiClient:
                 future = executor.submit(roadmap_agent.run_sync, prompt)
                 result = future.result(timeout=_TIMEOUT)
         except FuturesTimeoutError:
-            raise HTTPException(
-                status_code=502,
-                detail=_AI_UNAVAILABLE,
-            )
+            raise HTTPException(status_code=502, detail=_AI_UNAVAILABLE)
         except Exception as e:
-            logger.exception("Erro ao gerar plano via Gemini: %s", e)
-            raise HTTPException(
-                status_code=502,
-                detail=_AI_UNAVAILABLE,
-            )
+            logger.exception("Erro ao chamar Gemini (generate_plan): %s", e)
+            raise HTTPException(status_code=502, detail=_AI_UNAVAILABLE)
         return result.output
 
     def generate_actions(
@@ -59,14 +55,8 @@ class GeminiClient:
                 future = executor.submit(actions_agent.run_sync, prompt)
                 result = future.result(timeout=_TIMEOUT)
         except FuturesTimeoutError:
-            raise HTTPException(
-                status_code=502,
-                detail=_AI_UNAVAILABLE,
-            )
+            raise HTTPException(status_code=502, detail=_AI_UNAVAILABLE)
         except Exception as e:
-            logger.exception("Erro ao gerar ações via Gemini: %s", e)
-            raise HTTPException(
-                status_code=502,
-                detail=_AI_UNAVAILABLE,
-            )
+            logger.exception("Erro ao chamar Gemini (generate_actions): %s", e)
+            raise HTTPException(status_code=502, detail=_AI_UNAVAILABLE)
         return result.output.actions
