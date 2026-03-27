@@ -8,7 +8,7 @@
 
 | Documento | Descrição |
 |---|---|
-| [Requisitos do Produto (PRD)](backend/docs/Requisitos.md) | User stories, critérios de aceite, casos de uso e requisitos não-funcionais |
+| [Requisitos do Produto (PRD)](backend/docs/PRD.md) | User stories, critérios de aceite, casos de uso e requisitos não-funcionais |
 | [Arquitetura do Sistema](backend/docs/ARCHITECTURE.md) | Decisões arquiteturais, fluxo de dados, infraestrutura e agentes de IA |
 | [Prompts do Sistema](backend/docs/Prompts.md) | Versão inicial dos prompts utilizados no projeto MentorIA |
 ---
