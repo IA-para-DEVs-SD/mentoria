@@ -1,178 +1,111 @@
-# Arquitetura — MentorIA
+# Arquitetura — MentorIA (Frontend)
 
-## Visão Geral
+> Documento completo de arquitetura do projeto: [`backend/docs/ARCHITECTURE.md`](../../backend/docs/ARCHITECTURE.md)
 
-O MentorIA segue uma arquitetura de 3 camadas (frontend, backend, IA) com comunicação via REST + SSE, containerizada com Docker Compose e hospedada em um Droplet único na DigitalOcean.
+## Stack
 
-## Decisões Arquiteturais
+- **Vue 3** (Composition API + `<script setup>`)
+- **PrimeVue 4** (componentes UI) + **Tailwind CSS 4** (utilitários)
+- **Pinia** (state management)
+- **Vue Router 5** (SPA routing)
+- **Axios** (HTTP client)
+- **Lucide Vue Next** + **PrimeIcons** (ícones)
+- **Vite 7** (build tool)
+- **TypeScript 5.9**
 
-### Por que FastAPI + PydanticAI?
-
-- FastAPI é nativamente async, ideal para chamadas à LLM que são I/O-bound
-- PydanticAI permite definir agentes com outputs estruturados e validados via Pydantic
-- A integração com Gemini é nativa no PydanticAI, sem wrappers adicionais
-- Tipagem forte end-to-end: schemas Pydantic servem tanto para validação da API quanto para estruturar respostas da LLM
-
-### Por que Vue.js + PrimeVue?
-
-- Vue 3 com Composition API oferece reatividade granular e composables reutilizáveis
-- PrimeVue fornece componentes enterprise-ready (DataTable, Timeline, Stepper) que aceleram o desenvolvimento do dashboard e roadmap
-- Suporte nativo a temas e acessibilidade
-
-### Por que Gemini?
-
-- Custo-benefício competitivo para aplicações de análise de texto
-- Suporte nativo no PydanticAI como provider
-- Context window grande, útil para análise de perfis complexos
-- Capacidade multimodal (futuro: análise de currículos em PDF)
-
----
-
-## Agentes PydanticAI
-
-O sistema utiliza 3 agentes especializados:
-
-### 1. ProfileAnalyzer Agent
-
-```python
-# Responsabilidade: Analisar perfil e identificar gaps
-# Input: Dados do perfil do usuário
-# Output: Análise estruturada com pontos fortes, gaps e oportunidades
-```
-
-### 2. RoadmapGenerator Agent
-
-```python
-# Responsabilidade: Gerar plano de desenvolvimento personalizado
-# Input: Análise do perfil + dados de mercado
-# Output: Roadmap com etapas, prazos e recursos
-# Usa: Dados de mercado como contexto adicional
-```
-
-### 3. MentorChat Agent
-
-```python
-# Responsabilidade: Conversa interativa de mentoria
-# Input: Mensagem do usuário + contexto (perfil, roadmap, histórico)
-# Output: Resposta contextualizada com orientações práticas
-# Modo: Streaming via SSE
-```
-
----
-
-## Fluxo de Dados Detalhado
-
-### Geração de Roadmap
+## Estrutura
 
 ```
-1. Usuário preenche formulário de perfil (Vue.js)
-2. Frontend envia POST /api/profile
-3. Backend valida com Pydantic schema
-4. Persiste no PostgreSQL
-5. Dispara task async de análise
-6. ProfileAnalyzer Agent processa perfil via Gemini
-7. Market Service enriquece com dados de mercado
-8. RoadmapGenerator Agent gera plano personalizado
-9. Roadmap é persistido no PostgreSQL
-10. WebSocket notifica frontend que roadmap está pronto
-11. Frontend renderiza roadmap interativo (Timeline PrimeVue)
+src/
+├── App.vue                    # Root: Toast, ConfirmDialog, RouterView
+├── main.ts                    # Bootstrap: Pinia, PrimeVue, Router
+├── router/index.ts            # Rotas + navigation guard (JWT)
+│
+├── pages/                     # Páginas (1 por rota)
+│   ├── LoginPage.vue          # /
+│   ├── AuthCallbackPage.vue   # /auth/callback
+│   ├── OnboardingPage.vue     # /onboarding (wizard 5 steps)
+│   ├── LoadingAIPage.vue      # /loading (aguarda geração do plano)
+│   ├── HomePage.vue           # /home (lista de planos)
+│   └── PlanDetailPage.vue     # /plan/:id (detalhe do plano)
+│
+├── components/
+│   ├── auth/                  # GoogleLoginButton
+│   ├── onboarding/            # StepTrajetoria, StepFormacao, StepHabilidades, StepObjetivo, StepRevisao
+│   ├── home/                  # EmptyState, PlanCard, PlanList
+│   └── plan/                  # ActionItem, ActionTimeline, GapsList, PlanHeader, ProgressCard
+│
+├── composables/
+│   └── useOnboarding.ts       # Lógica reativa do wizard de onboarding
+│
+├── services/                  # Camada HTTP (Axios)
+│   ├── api.ts                 # Instância Axios (baseURL, interceptors JWT/401)
+│   ├── authService.ts         # loginWithGoogle(), logout()
+│   ├── planService.ts         # CRUD planos e ações
+│   └── profileService.ts     # get/save perfil
+│
+├── stores/                    # Pinia stores
+│   ├── authStore.ts           # Token, autenticação, login/logout
+│   ├── plansStore.ts          # Lista planos, plano atual, ações
+│   └── profileStore.ts       # Perfil do usuário
+│
+├── types/                     # TypeScript types (alinhados com backend schemas)
+│   ├── index.ts               # Re-exports
+│   ├── user.ts                # User, TokenResponse
+│   ├── profile.ts             # Seniority, EducationLevel, CareerGoal, ProfileData/Out, label maps
+│   └── plan.ts                # ActionStatus, Priority, Plan, Action, Gap
+│
+└── assets/
+    └── main.css               # Estilos globais + Tailwind
 ```
 
-### Chat com Mentor IA
+## Rotas
+
+| Rota              | Página             | Auth | Descrição                        |
+|-------------------|--------------------|------|----------------------------------|
+| `/`               | LoginPage          | Não  | Login com Google                 |
+| `/auth/callback`  | AuthCallbackPage   | Não  | Recebe token do OAuth callback   |
+| `/onboarding`     | OnboardingPage     | Sim  | Wizard de perfil (5 etapas)      |
+| `/loading`        | LoadingAIPage      | Sim  | Tela de loading durante geração  |
+| `/home`           | HomePage           | Sim  | Lista de planos do usuário       |
+| `/plan/:id`       | PlanDetailPage     | Sim  | Detalhe do plano com ações/gaps  |
+
+## Navigation Guard
+
+- Rotas públicas: `/` e `/auth/callback`
+- Rotas protegidas: todas as demais (requer `token` no localStorage)
+- Se autenticado e acessa `/` → redireciona para `/home`
+
+## Comunicação com Backend
+
+- Base URL: `VITE_API_URL` (default: `http://localhost:8000`)
+- Interceptor de request: adiciona `Authorization: Bearer {token}`
+- Interceptor de response: se 401 → limpa token e redireciona para `/`
+- No Docker: Nginx faz proxy de `/api/*` para `backend:8000`
+
+## Fluxo do Usuário
 
 ```
-1. Usuário envia mensagem no chat
-2. Frontend faz POST /api/chat
-3. Backend carrega contexto: perfil + roadmap + últimas N mensagens
-4. MentorChat Agent processa via Gemini com streaming
-5. Resposta é enviada via SSE (Server-Sent Events)
-6. Frontend renderiza resposta em tempo real
-7. Mensagem é persistida no histórico (PostgreSQL)
+Login → OAuth Google → Callback (salva JWT)
+  ├── Tem perfil? → HomePage (lista planos)
+  └── Não tem? → Onboarding (5 steps) → POST /profile
+                    → LoadingAIPage → POST /plans (Gemini gera plano)
+                    → PlanDetailPage (visualizar/gerenciar plano)
 ```
 
----
+## Onboarding (5 etapas)
 
-## Infraestrutura DigitalOcean
+1. **StepTrajetoria** — Experiências profissionais (cargo, senioridade, empresa, datas)
+2. **StepFormacao** — Formação acadêmica (instituição, nível, título, área, datas)
+3. **StepHabilidades** — Lista de habilidades técnicas
+4. **StepObjetivo** — Objetivo de carreira (enum: crescer, liderar, mudar de área)
+5. **StepRevisao** — Revisão dos dados antes de enviar
 
-Tudo roda em um único Droplet via Docker Compose. Simples, barato e suficiente para MVP.
+## PlanDetailPage (funcionalidades)
 
-```
-Internet
-    │
-    ▼
-┌──────────────────────────────────────────────┐
-│         Droplet (4 vCPU / 8 GB RAM)          │
-│              Docker Compose                   │
-│                                               │
-│  ┌─────────────────────────────────────────┐  │
-│  │  Nginx (container)                       │  │
-│  │  - Reverse proxy                         │  │
-│  │  - SSL (Let's Encrypt)                   │  │
-│  │  - Serve frontend estático               │  │
-│  └──────────┬──────────────────┬───────────┘  │
-│             │                  │               │
-│             ▼                  ▼               │
-│  ┌────────────────┐  ┌────────────────┐       │
-│  │  FastAPI        │  │  Worker         │       │
-│  │  (container)    │  │  (container)    │       │
-│  └───────┬────────┘  └───────┬────────┘       │
-│          │                   │                 │
-│          ▼                   ▼                 │
-│  ┌────────────────┐  ┌────────────────┐       │
-│  │  PostgreSQL     │  │  Redis          │       │
-│  │  (container)    │  │  (container)    │       │
-│  │  Volume: /data  │  │                 │       │
-│  └────────────────┘  └────────────────┘       │
-└──────────────────────────────────────────────┘
-         │
-         ▼
-   Google Gemini API
-```
-
-### Composição dos Containers
-
-| Container | Porta Interna | Descrição |
-|---|---|---|
-| nginx | 80, 443 | Reverse proxy + frontend estático |
-| fastapi | 8000 | API principal |
-| worker | — | Background jobs (análise IA, roadmaps) |
-| postgres | 5432 | Banco de dados (volume persistente) |
-| redis | 6379 | Cache e sessões |
-
-### Por que Droplet único?
-
-- Custo previsível (~$48/mês para 4vCPU/8GB)
-- Zero complexidade de rede entre serviços (tudo em docker network local)
-- Deploy simples: SSH + docker compose pull + up
-- Suficiente para centenas de usuários simultâneos no MVP
-- Migração futura: separar banco e cache para Managed Database quando necessário
-
----
-
-## Segurança
-
-- Autenticação via JWT (access + refresh tokens)
-- HTTPS em todas as comunicações (Let's Encrypt via Certbot no Nginx)
-- Rate limiting via Redis no backend
-- CORS configurado para domínio específico
-- Secrets gerenciados via `.env` no Droplet (fora do repositório)
-- Dados sensíveis criptografados em repouso (volume encriptado)
-- Firewall do DigitalOcean (Cloud Firewall) — apenas portas 80, 443 e 22 abertas
-- Input sanitization em todas as entradas do usuário
-- Prompt injection protection nos agentes PydanticAI
-
----
-
-## Escalabilidade
-
-A arquitetura atual é um Droplet único (MVP). O caminho de evolução:
-
-1. **Fase atual (MVP)** — Tudo no Droplet via Docker Compose
-2. **Fase 2** — Separar PostgreSQL e Redis para Managed Database/Redis da DigitalOcean
-3. **Fase 3** — Adicionar Load Balancer + múltiplos Droplets para o backend
-4. **Fase 4** — Frontend em Spaces + CDN, backend em Droplets com auto-scaling
-
-Otimizações já aplicáveis no MVP:
-- Cache de respostas da LLM no Redis (respostas similares)
-- Background workers para processamento assíncrono de roadmaps
-- Volume persistente para dados do PostgreSQL (sobrevive a recreate do container)
+- Visualizar gaps identificados pela IA (GapsList)
+- Timeline de ações ordenadas por sequência (ActionTimeline)
+- Marcar ação como concluída/pendente (PATCH)
+- Remover ação (DELETE — registra rejeição no backend)
+- Gerar mais ações via IA (POST /actions/generate)
+- Barra de progresso calculada pelo backend

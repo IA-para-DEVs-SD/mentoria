@@ -9,21 +9,23 @@
 | Documento | Descrição |
 |---|---|
 | [Requisitos do Produto (PRD)](backend/docs/PRD.md) | User stories, critérios de aceite, casos de uso e requisitos não-funcionais |
-| [Arquitetura do Sistema](backend/docs/ARCHITECTURE.md) | Decisões arquiteturais, fluxo de dados, infraestrutura e agentes de IA |
-| [Prompts do Sistema](backend/docs/Prompts.md) | Versão inicial dos prompts utilizados no projeto MentorIA |
+| [Arquitetura do Backend](backend/docs/ARCHITECTURE.md) | Arquitetura completa: modelo de dados, endpoints, agentes IA, infraestrutura Docker |
+| [Arquitetura do Frontend](frontend/docs/ARCHITECTURE.md) | Stack, estrutura de pastas, rotas, stores, fluxo do usuário |
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
 | Camada | Tecnologia | Justificativa |
 |---|---|---|
-| Frontend | Vue.js 3 + PrimeVue | Componentização rica, UI profissional e responsiva |
-| Backend | Python + FastAPI | Alta performance async, tipagem forte, ecossistema IA |
-| LLM | Google Gemini via PydanticAI | Outputs estruturados com validação, agentes inteligentes |
-| Banco de Dados | PostgreSQL | Dados relacionais, perfis, histórico de planos |
-| Cache | Redis | Sessões, cache de respostas da LLM, rate limiting |
-| Infra | Docker Compose | Todos os serviços containerizados em ambiente único |
-| CI/CD | GitHub Actions | Automação de deploy integrada ao repositório |
+| Frontend | Vue.js 3 + PrimeVue 4 + Tailwind CSS 4 | Composition API, componentes enterprise-ready, utilitários CSS |
+| State | Pinia | State management reativo e type-safe para Vue 3 |
+| Build | Vite 7 + TypeScript 5.9 | Build rápido, HMR, tipagem forte end-to-end |
+| Backend | Python 3.12 + FastAPI | Alta performance async, tipagem forte, ecossistema IA |
+| ORM | SQLAlchemy + Alembic | ORM maduro com migrations versionadas |
+| Banco de Dados | SQLite | Leve, sem dependências externas, ideal para MVP |
+| LLM | Google Gemini 2.5 Flash via PydanticAI | Outputs estruturados com validação, agentes inteligentes |
+| Autenticação | Google OAuth 2.0 + JWT (python-jose) | Login social sem senha, tokens stateless |
+| Infra | Docker Compose | Frontend e backend containerizados em rede local |
 
 ---
 
@@ -52,11 +54,11 @@ cp backend/.env.example backend/.env
 
 ```env
 GEMINI_API_KEY=sua-chave-gemini
-DATABASE_URL=postgresql://user:pass@postgres:5432/mentoria
-REDIS_URL=redis://redis:6379
+DATABASE_URL=sqlite:///./mentoria.db
 JWT_SECRET=sua-chave-secreta
 GOOGLE_CLIENT_ID=seu-client-id
 GOOGLE_CLIENT_SECRET=seu-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
 ```
 
 3. Suba os serviços:
