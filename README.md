@@ -34,7 +34,7 @@
 ### Pré-requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) e [Docker Compose](https://docs.docker.com/compose/install/)
-- Chave de API do [Google Gemini](https://ai.google.dev/)
+- Chave de API do [Google Gemini](https://aistudio.google.com/api-keys)
 - Credenciais OAuth do Google (para autenticação)
 
 ### Configuração
@@ -67,7 +67,13 @@ GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
 docker compose up -d
 ```
 
-4. Acesse a aplicação:
+4. Na primeira execução, crie a estrutura do banco de dados:
+
+```bash
+docker compose exec backend alembic upgrade head
+```
+
+5. Acesse a aplicação:
 
 | Serviço | URL |
 |---|---|
