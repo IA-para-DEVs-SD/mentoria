@@ -10,7 +10,7 @@ Mentoria.IA é uma plataforma de mentoria de carreira impulsionada por inteligê
 
 #### Primeiro Acesso
 1. Usuário faz login na plataforma
-2. Usuário preenche seus dados profissionais em 5 etapas: experiência profissional, formação acadêmica, habilidades e objetivo de carreira
+2. Usuário preenche seus dados profissionais em 5 etapas: experiência profissional, formação acadêmica, habilidades e objetivo de carreira, Revisão
 3. Sistema envia dados para IA
 4. Sistema gera o primeiro plano de desenvolvimento
 
@@ -33,7 +33,8 @@ Mentoria.IA é uma plataforma de mentoria de carreira impulsionada por inteligê
 
 **Incluído no Escopo:**
 - Sistema de autenticação com Google - Integração real com OAuth do Google
-- Onboarding em 5 etapas para coleta de dados do usuário
+- Logout com remoção de sessão local e redirecionamento para login
+- Onboarding em 5 etapas para coleta de dados do usuário (incluindo etapa de revisão)
 - Análise de perfil via IA para identificação de gaps de competência
 - Geração de roadmap personalizado com ações de desenvolvimento
 - Página inicial (Home) com lista de planos gerados
@@ -65,7 +66,6 @@ Mentoria.IA é uma plataforma de mentoria de carreira impulsionada por inteligê
 - **IA**: Inteligência artificial utilizada para análise de perfil
 - **Onboarding**: Processo de coleta de informações do usuário em 5 etapas
 - **Home**: Página inicial após login que lista todos os planos gerados
-- **Plano Ativo**: Plano atualmente selecionado para acompanhamento
 - **Dados de Perfil**: Informações do usuário: experiência, formação, habilidades e objetivo de carreira
 
 ---
@@ -124,8 +124,8 @@ _Dados a ser capturado do Login:_
 **Para que** o sistema tenha informações suficientes para gerar meu primeiro plano de desenvolvimento.
 
 **Critérios de Aceite:**
-1. A Mentoria.IA DEVE apresentar 4 etapas de onboarding. Descritos abaixo dos requisitos.
-2. QUANDO o usuário completar uma etapa, A Mentoria.IA DEVERÁ salvar os dados
+1. A Mentoria.IA DEVE apresentar 5 etapas de onboarding: Trajetória Profissional, Formação Acadêmica, Habilidades, Objetivo de Carreira e Revisão. Descritos abaixo dos requisitos.
+2. QUANDO o usuário concluir todas as etapas e confirmar na etapa de Revisão, A Mentoria.IA DEVERÁ salvar todos os dados do perfil de uma vez.
 3. A Mentoria.IA DEVERÁ permitir a navegação entre etapas já concluídas (voltar e avançar)
 4. QUANDO todas as etapas forem concluídas, A Mentoria.IA DEVERÁ redirecionar para geração do primeiro plano
 5. SE o usuário tentar pular etapas obrigatórias, A Mentoria.IA DEVE exibir mensagem de erro
@@ -136,11 +136,12 @@ _Dados a ser capturado do Login:_
 - Permitir múltiplos registros de experiência.
 
 _Campos do formulário:_
-- Cargo: Campo do tipo texto livre, não permite apenas espaços em branco, permite caracteres alfanuméricos e acentuação.
+- Cargo: Campo do tipo texto livre, obrigatório, não permite apenas espaços em branco, permite caracteres alfanuméricos e acentuação.
 - Nível de Senioridade: Campo do tipo seleção, obrigatório. Opções disponíveis: Estágio, Júnior, Pleno, Sênior, Especialista, Liderança (Tech Lead / Manager).
 - Empresa: Campo do tipo texto livre, opcional, permite caracteres alfanuméricos e acentuação.
 - Data de Início: Campo do tipo data, obrigatório, formato exibido: MM/AAAA. Deve permitir seleção via calendário e/ou digitação. Não pode ser uma data futura. Deve ser menor ou igual à Data de Fim (quando preenchida).
-- Data de Fim: Campo do tipo data, opcional. Placeholder: “Vazio = atual”. Quando não preenchido, o sistema deve considerar o vínculo como atual/em andamento. Se preenchido:Deve ser maior ou igual à Data de Início. Não pode ser uma data futura (ou permitir apenas até a data atual).
+- Data de Fim: Campo do tipo data, opcional. Placeholder: "Vazio = atual". Quando não preenchido, o sistema considera o vínculo como atual/em andamento. Se preenchido: deve ser maior ou igual à Data de Início. Não pode ser uma data futura.
+- É obrigatório pelo menos 1 registro de experiência profissional.
 
 _Mensagens sugeridas:_
 - Selecione o nível de senioridade.
@@ -155,6 +156,11 @@ _Campos do formulário:_
 - Área de Estudo: Campo do tipo texto, obrigatório. Não permite apenas espaços em branco.
 - Data de Início: Campo do tipo data, obrigatório. Formato exibido: DD/MM/AAAA. Não pode ser uma data futura. Deve ser menor ou igual à Data de Fim (quando preenchida).
 - Data de Fim: Campo do tipo data, opcional. Quando não preenchido, o sistema deve considerar como curso em andamento. Se preenchido: Deve ser maior ou igual à Data de Início. Pode permitir datas futuras (ex: previsão de conclusão).
+- É obrigatório pelo menos 1 registro de formação acadêmica.
+
+
+**Nota de design:** A Formação Acadêmica usa formato DD/MM/AAAA (data completa) enquanto a Trajetória Profissional usa MM/AAAA (mês/ano), pois o dia exato de início/fim de um emprego é irrelevante. A Data de Fim da formação permite datas futuras para acomodar previsão de conclusão, diferente da trajetória profissional onde vínculos futuros não fazem sentido.
+
 
 _Mensagens Sugeridas:_
 - Informe a instituição.
@@ -195,6 +201,13 @@ _Campos do formulário:_
 _Mensagens Sugeridas:_
 - Selecione um objetivo para continuar.
 
+**Revisão:**
+- Etapa final do onboarding que exibe um resumo de todos os dados preenchidos nas etapas anteriores.
+- O usuário pode conferir as informações antes de confirmar a geração do plano.
+- Deve exibir: lista de experiências profissionais, formações acadêmicas, habilidades (como chips) e objetivo de carreira selecionado.
+- O usuário pode voltar para qualquer etapa anterior para corrigir dados.
+- O botão de confirmação ("Gerar Mentoria IA") só é habilitado se todas as etapas anteriores estiverem válidas.
+
 ### US 3: Receber Primeiro Plano Personalizado
 
 **Como** usuário,  
@@ -204,7 +217,7 @@ _Mensagens Sugeridas:_
 **Critérios de Aceite:**
 1. QUANDO o onboarding for concluído, a Mentoria.IA DEVERÁ enviar dados do perfil para API Gemini.
 2. A API Gemini DEVERÁ analisar o perfil e gerar plano de desenvolvimento.
-3. Deve haver pelo menos 1 Gap de Competência identificado, ou seja, áreas onde o usuário precisa evoluir. Os Gaps baseam-se em:
+3. Deve haver pelo menos 1 Gap de Competência identificado, ou seja, áreas onde o usuário precisa evoluir. Não há limite máximo de gaps. Os Gaps baseam-se em:
     - Objetivo do usuário
     - Trajetória profissional
     - Habilidades 
@@ -216,19 +229,18 @@ _Mensagens Sugeridas:_
         - Fundamentos
         - Aplicação
         - Avançado / Estratégico
-5. O conteúdo do plano deve ser:
-    - Curto
-    - Direto
-    - Personalizado
+5. O plano gerado deve respeitar os seguintes limites:
+   - Mínimo de 3 ações por plano. Não há limite máximo.
+   - Mínimo de 1 gap de competência. Não há limite máximo.
+   - Título de cada ação: máximo de 100 caracteres
+   - Objetivo de cada ação: máximo de 300 caracteres
+   - Contexto de cada ação: máximo de 500 caracteres
+   - O conteúdo deve ser personalizado com base no perfil do usuário (não genérico)
 6. A Mentoria.IA DEVERÁ salvar o plano.
 7. A Mentoria.IA DEVERÁ redirecionar para a página de detalhes do plano ![US 4: Ver Detalhes de um Plano](#us-4-ver-detalhes-de-um-plano)
 8. CASO a API retorne erro, o Mentoria.IA DEVE exibir mensagem de erro e permitir nova tentativa.
 9. Estados possíveis: Carregando (loading); Plano gerado; Erro na geração; Plano vazio (fallback).
-10. Cada plano gerado deve conter um nome gerado automaticamente com base em:
-    - Objetivo (ex: Liderança, Transição, Crescimento)
-    - Senioridade (ex: Júnior, Pleno, Sênior)
-    - GAP principal
-    - Estrutura recomendada: Plano + [Objetivo] + [Contexto] + [Data]
+10. Cada plano gerado deve conter um nome gerado automaticamente pela IA, contextualizado com base no perfil e objetivo do usuário.
 
 _Mensagens sugeridas:_
 - Estamos gerando seu plano personalizado...
@@ -257,6 +269,7 @@ _Mensagens sugeridas:_
         - Fórmula: _progresso = (ações concluídas / total de ações) * 100_
 4. A Mentoria.IA DEVERÁ listar todos os Gaps de Competência Identificados.
 5. A lista de Gaps deve ser ordenada por relevância (maior impacto primeiro).
+    - A importância do impacto deve ser gerada pela IA
 6. A Mentoria.IA DEVERÁ listar de ações organizadas em formato de timeline/etapas.
 7. Cada item deve conter:
     - Prioridade: ALTA, MÉDIA, BAIXA
@@ -264,15 +277,14 @@ _Mensagens sugeridas:_
     - Título: Nome da ação (ex: "Desenvolvimento de Inteligência Emocional...")
     - Objetivo: Descrição clara do que será desenvolvido
     - Contexto: Explicação personalizada baseada no perfil do usuário
-8. A timeline das ações deve ser ordenada por prioridade e sequência lógica de aprendizado.
+8. A timeline das ações deve ser ordenada por prioridade e sequência lógica de aprendizado, oriundas da IA, prevalescendo a ordem de prioridade em caso de conflitos.
 9. A Mentoria.IA DEVE permitir ao usuário marcar ações como concluídas.
 10. QUANDO uma ação estiver marcada como concluída, A Mentoria.IA DEVERÁ atualizar o progresso do plano.
-11. A Mentoria.IA DEVE permitir ao usuário a exclusão de item do Plano de Ação (Timeline).
+11. A Mentoria.IA DEVE permitir ao usuário a exclusão de item do Plano de Ação (Timeline), exceto se for o único item do plano:    
     - Solicitar confirmação do usuário
-    - Ao excluir, deve recalcular automaticamente o progresso e atualizar UI em tempo real
-    - Não permitir exclusão se for o único item do plano (opcional, mas recomendado)
-    - O sistema deve registrar que o usuário rejeitou aquele tipo de ação. Isso deve impactar futuras recomendações:
-        - Evitar gerar conteúdos similares
+    - Ao excluir, deve recalcular automaticamente o progresso e atualizar UI em tempo real    
+    - O sistema deve registrar que o usuário rejeitou aquela ação para:
+        - Evitar gerar conteúdos similares, ou seja, que contenham o mesmo sentido semânticamente
         - Ajustar o modelo de recomendação
     - Gaps não devem ser removidos
 12. A Mentoria.IA DEVE permitir ao usuário gerar mais ações ao Plano de Ação (Timeline).
@@ -281,6 +293,7 @@ _Mensagens sugeridas:_
     - Evitar repetição de conteúdos
     - Deve recalcular o progresso
     - Atualizar UI em tempo real
+    - A geração de novas ações deve retornar pelo menos 1 ação. A quantidade é determinada pela IA com base nos gaps e no progresso atual do plano. Não há limite máximo.
 13. A página deverá exibir botão para retornar à Home
     
 _Mesagens Sugeridas:_
@@ -305,7 +318,9 @@ _Mesagens Sugeridas:_
 3. A Mentoria.IA DEVE exibir o botão "Gerar Novo Plano" na Home.
 4. A Mentoria.IA DEVERÁ exibir a opção "Ver Detalhes" para cada plano.
 5. A Mentoria.IA DEVERÁ exibir a opção "Excluir" para cada plano ![US 6: Excluir um Plano](#us-6-excluir-um-plano).
-6. CASO não haja planos salvos, A Mentoria.IA DEVERÁ exibir mensagem orientando o usuário a gerar o primeiro plano.
+6. CASO não haja planos salvos (inclusive se todos foram excluídos), A Mentoria.IA DEVERÁ exibir empty state com mensagem "Você ainda não tem planos de desenvolvimento" e botão "Gerar Primeiro Plano". O usuário permanece na Home.
+
+**Nota de design:** A listagem de planos na Home carrega todos os planos do usuário sem paginação. Para o MVP, não há limite de planos exibidos. Paginação poderá ser implementada em versão futura caso o volume justifique.
 
 ### US 6: Excluir um Plano
 
@@ -317,7 +332,7 @@ _Mesagens Sugeridas:_
 1. QUANDO o usuário clicar em "Excluir", A Mentoria.IA DEVERÁ exibir modal de confirmação
 2. SE o usuário confirmar, A Mentoria.IA DEVERÁ remover o plano.
 3. A Mentoria.IA VAI atualizar a lista de planos na Home.
-4. SE o último plano for excluído, A Mentoria.IA DEVERÁ exibir mensagem orientando geração de novo plano.
+4. SE o último plano for excluído, A Mentoria.IA DEVERÁ exibir o empty state com mensagem orientativa e botão "Gerar Primeiro Plano". O usuário permanece na Home.
 
 _Mensagens Sugeridas:_
 - Ao solicitar confirmação: "Ao excluir este plano, você perderá seu progresso e histórico de desenvolvimento. Essa ação não pode ser desfeita."
@@ -332,7 +347,7 @@ _Mensagens Sugeridas:_
 
 **Critérios de Aceite:**
 1. QUANDO o usuário clicar em "Gerar Novo Plano", A Mentoria.IA DEVERÁ abrir fluxo de onboargins novamente.
-2. A Mentoria.IA DEVE pré-preencher os campos com dados do perfil salvos.
+2. A Mentoria.IA DEVE pré-preencher os campos com dados do perfil salvos, que foram preenchidos no onboarding.
 3. A Mentoria.IA DEVE permitir ao usuário modificar qualquer informação.
 4. QUANDO o usuário confirmar geração, a API Gemini DEVE gerar novo plano de desenvolvimento, conforme ![US 3: Receber Primeiro Plano Personalizado](#us-3-receber-primeiro-plano-personalizado).
 5. A Mentoria.IA DEVERÁ salvar o novo plano.
@@ -340,25 +355,46 @@ _Mensagens Sugeridas:_
 
 ---
 
-## 5. Requisitos Não-Funcionais
+6. A Mentoria.IA DEVERÁ redirecionar para a página de detalhes do plano.
 
-### RNF 1: Desempenho
+### US 8: Logout
 
-- A Mentoria.IA DEVERÁ carregar a página inicial em menos de 3 segundos.
+**Como** usuário,  
+**Eu quero** sair da plataforma,  
+**Para que** minha sessão seja encerrada e meus dados protegidos.
+
+**Critérios de Aceite:**
+1. A Mentoria.IA DEVE exibir opção de logout acessível em todas as páginas autenticadas.
+2. QUANDO o usuário clicar em "Sair", A Mentoria.IA DEVERÁ remover o token JWT armazenado localmente (localStorage).
+3. A Mentoria.IA DEVERÁ redirecionar o usuário para a página de login.
+4. Após logout, qualquer tentativa de acessar páginas autenticadas DEVE redirecionar para a página de login.
+5. O token JWT possui validade de 24 horas. QUANDO o token expirar, A Mentoria.IA DEVERÁ retornar erro 401 e redirecionar para a página de login.
+6. Não há refresh token. Após expiração, o usuário deve realizar novo login com Google.
+
+_Mensagens sugeridas:_
+- Token expirado: "Sua sessão expirou. Faça login novamente."
+
+> **Nota de implementação:** O logout é client-side (remoção do token do localStorage). Não há endpoint de logout no backend, pois o JWT é stateless — a invalidação ocorre pela remoção local e pela expiração natural do token.
+
+---
+
+## 5. Requisitos Não-Funcionais a página inicial em menos de 3 segundos.
 - A Mentoria.IA DEVERÁ processar respostas da API Gemini em menos de 10 segundos.
 - A Mentoria.IA DEVERÁ responder a interações do usuário em menos de 100ms.
 
 ### RNF 2: Segurança
 
-- A Mentoria.IA DEVERÁ criptografar dados sensíveis antes de armazenar.
+- São considerados dados sensíveis: token JWT, credenciais OAuth (client_secret) e chave da API Gemini. Esses dados DEVEM ser armazenados exclusivamente em variáveis de ambiente (.env), fora do repositório.
+- Dados do perfil do usuário (nome, e-mail, experiências, formações, habilidades) são protegidos por autenticação (JWT) e HTTPS em trânsito. Não há criptografia em repouso no MVP.
 - A Mentoria.IA DEVERÁ validar dados de entrada em todos os formulários.
 - A Mentoria.IA DEVERÁ implementar proteção contra XSS em entradas de usuário.
 
-### RNF 3: Usabilidade
+### RNF 3: Usabilidade e Acessibilidade
 
 - A Mentoria.IA DEVERÁ ser intuitivo para novos usuários sem treinamento.
 - A Mentoria.IA DEVERÁ fornecer feedback visual de todas as operações.
 - A Mentoria.IA DEVERÁ funcionar em dispositivos com tela a partir de 320px de largura.
+- A Mentoria.IA DEVERÁ atender ao nível A das diretrizes WCAG 2.1 como meta mínima, incluindo: labels acessíveis em controles interativos (aria-label), navegação por teclado e contraste mínimo de texto.
 
 ### RNF 4: Compatibilidade
 
@@ -401,10 +437,10 @@ _Mensagens Sugeridas:_
 | Campo | Descrição |
 |-------|-----------|
 | **Ator** | Usuário autenticado com dados de perfil |
-| **Pré-condições** | Usuário está autenticado e possui pelo menos um plano salvo |
+| **Pré-condições** | Usuário está autenticado e possui dados de perfil salvos |
 | **Fluxo Principal** | 1. Usuário acessa a aplicação <br> 2. Sistema verifica dados de perfil existentes <br> 3. Sistema redireciona para Home <br> 4. Home lista todos os planos salvos <br> 5. Cada plano exibe título, data e progresso |
 | **Pós-condições** | Usuário visualiza lista de planos na Home |
-| **Fluxo Alternativo** | Nenhum plano salvo: exibir mensagem para gerar primeiro plano |
+| **Fluxo Alternativo** | Nenhum plano salvo (inclusive se todos foram excluídos): exibir empty state com mensagem "Você ainda não tem planos de desenvolvimento" e botão "Gerar Primeiro Plano". O usuário permanece na Home — não é redirecionado para o onboarding. |
 | **Exceções** | Falha na comunicação: exibir erro e oferecer recuperação |
 
 ### UC 4: Visualização de Detalhes do Plano
@@ -438,17 +474,28 @@ _Mensagens Sugeridas:_
 | **Fluxo Principal** | 1. Usuário clica em "Gerar Novo Plano" <br> 2. Sistema abre fluxo de preenchimento <br> 3. Sistema pré-preenche campos com dados do perfil <br> 4. Usuário pode atualizar informações <br> 5. Usuário confirma geração <br> 6. Sistema envia dados para API Gemini <br> 7. API Gemini gera novo plano <br> 8. Sistema salva novo plano <br> 9. Sistema redireciona para Detalhes do plano |
 | **Pós-condições** | Novo plano salvo e visível na lista |
 | **Fluxo Alternativo** | Usuário cancela: retorna para Home sem alteração |
-| **Exceções** | API Gemini retorna erro: exibir mensagem e permitir retry; localStorage cheio: notificar usuário |
+| **Exceções** | API Gemini retorna erro: exibir mensagem e permitir retry |
+
+### UC 7: Logout
+
+| Campo | Descrição |
+|-------|-----------|
+| **Ator** | Usuário autenticado |
+| **Pré-condições** | Usuário possui sessão ativa (token JWT válido armazenado no localStorage) |
+| **Fluxo Principal** | 1. Usuário clica em "Sair" <br> 2. Sistema remove o token JWT do localStorage <br> 3. Sistema limpa o estado de autenticação da aplicação <br> 4. Sistema redireciona para a página de login |
+| **Pós-condições** | Sessão encerrada; usuário redirecionado para login; acesso a páginas autenticadas bloqueado |
+| **Fluxo Alternativo** | Token JWT expira (24h): sistema retorna erro 401, redireciona para login |
+| **Exceções** | Nenhuma — logout é client-side e não depende de comunicação com o backend |
 
 ---
 
-## 8. Definition Of Done (DOD)
+## 7. Definition Of Done (DOD)
 
-### 8.1 Critérios de Aceite do Produto
+### 7.1 Critérios de Aceite do Produto
 
 - [ ] Todos os requisitos funcionais (US 1 à 7) implementados e testados
 - [ ] Todos os requisitos não-funcionais atendidos
-- [ ] Interface de usuário intuitiva e acessível
+- [ ] Interface de usuário intuitiva e acessível (WCAG 2.1 nível A)
 - [ ] Fluxo de primeiro acesso funcionando corretamente
 - [ ] Fluxo de acessos posteriores com lista de planos funcionando
 - [ ] Dados pré-preenchidos ao gerar novo plano
@@ -456,7 +503,7 @@ _Mensagens Sugeridas:_
 - [ ] Testes de integração passando
 - [ ] Validação de segurança contra XSS implementada
 
-### 8.2 Critérios de Aceite de Release
+### 7.2 Critérios de Aceite de Release
 
 - [ ] Zero defeitos críticos abertos
 - [ ] Zero defeitos maiores abertos
@@ -465,7 +512,7 @@ _Mensagens Sugeridas:_
 
 ---
 
-## 9. Riscos e Mitigações
+## 8. Riscos e Mitigações
 
 | Risco | Impacto | Probabilidade | Mitigação |
 |-------|---------|---------------|-----------|
@@ -476,6 +523,6 @@ _Mensagens Sugeridas:_
 
 **Versão:** 1.0  
 **Data de Criação:** 21-03-2026 
-**Última Atualização:** 21-03-2026  
+**Última Atualização:** 30-03-2026  
 **Autor:** Mentoria.IA - Grupo 6  
 **Status:** Rascunho
