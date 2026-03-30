@@ -12,3 +12,4 @@ pytest
 hypothesis
 pytest-asyncio
 pytest-cov
+ruff

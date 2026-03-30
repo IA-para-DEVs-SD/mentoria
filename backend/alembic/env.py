@@ -1,17 +1,15 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
+import src.auth.models
+import src.plans.models
+import src.profile.models  # noqa: F401
 from alembic import context
+from src.config import settings
 
 # Import Base and all models so Alembic can detect them
 from src.database import Base
-import src.auth.models  # noqa: F401
-import src.profile.models  # noqa: F401
-import src.plans.models  # noqa: F401
-
-from src.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

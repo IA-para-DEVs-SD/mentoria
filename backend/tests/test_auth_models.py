@@ -2,11 +2,11 @@
 Testes unitários para o módulo auth/models.py
 """
 import uuid
-from datetime import datetime
 
 import pytest
 
-from src.auth.models import User, UUID as CustomUUID
+from src.auth.models import UUID as CustomUUID
+from src.auth.models import User
 
 
 class TestUUIDTypeDecorator:

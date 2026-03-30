@@ -30,7 +30,7 @@ class TestGetDb:
 
     def test_closes_session_after_use(self):
         # Arrange
-        with patch("app.dependencies.SessionLocal") as mock_session_local:
+        with patch("src.dependencies.SessionLocal") as mock_session_local:
             mock_session = MagicMock()
             mock_session_local.return_value = mock_session
 

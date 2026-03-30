@@ -1,11 +1,11 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 
 def utc_now():
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
-from sqlalchemy import Column, Date, DateTime, ForeignKey, JSON, String
+from sqlalchemy import JSON, Column, Date, DateTime, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from src.auth.models import UUID

@@ -1,15 +1,16 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 
 def utc_now():
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
+
+import uuid
 
 from sqlalchemy import Column, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
-from sqlalchemy.types import TypeDecorator, String as SAString
-import uuid
+from sqlalchemy.types import String as SAString
+from sqlalchemy.types import TypeDecorator
 
 from src.database import Base
 

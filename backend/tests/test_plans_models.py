@@ -1,10 +1,7 @@
 """
 Testes unitários para o módulo plans/models.py
 """
-import uuid
 from datetime import datetime
-
-import pytest
 
 from src.plans.models import Action, Gap, Plan, Rejection
 

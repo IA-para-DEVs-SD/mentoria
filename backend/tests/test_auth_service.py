@@ -1,14 +1,12 @@
 """
 Testes unitários para o módulo auth/service.py
 """
-import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi import HTTPException
 
-from src.auth.models import User
 from src.auth.service import AuthService
 
 
@@ -132,6 +130,7 @@ class TestAuthServiceCreateJwt:
         # Arrange
         service = AuthService()
         from jose import jwt
+
         from src.config import settings
 
         # Act
@@ -145,6 +144,7 @@ class TestAuthServiceCreateJwt:
         # Arrange
         service = AuthService()
         from jose import jwt
+
         from src.config import settings
 
         # Act
@@ -153,8 +153,8 @@ class TestAuthServiceCreateJwt:
 
         # Assert
         assert "exp" in payload
-        exp_time = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
-        assert exp_time > datetime.now(timezone.utc)
+        exp_time = datetime.fromtimestamp(payload["exp"], tz=UTC)
+        assert exp_time > datetime.now(UTC)
 
 
 class TestAuthServiceVerifyJwt:

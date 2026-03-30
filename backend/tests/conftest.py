@@ -2,18 +2,17 @@
 Fixtures compartilhadas para todos os testes.
 """
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.auth.models import User
 from src.database import Base
 from src.plans.models import Action, Gap, Plan, Rejection
 from src.profile.models import Education, Experience, Profile
-
 
 # ---------------------------------------------------------------------------
 # Database Fixtures
@@ -23,10 +22,10 @@ from src.profile.models import Education, Experience, Profile
 def db_engine():
     """Cria engine SQLite em memória simulando dialeto PostgreSQL para testes."""
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
-    
+
     # Simula o dialeto PostgreSQL para testes
     engine.dialect.name = "postgresql"
-    
+
     Base.metadata.create_all(bind=engine)
     yield engine
     Base.metadata.drop_all(bind=engine)
@@ -204,11 +203,12 @@ def sample_rejection(db_session, sample_user):
 def valid_jwt_token(sample_user_id):
     """Gera token JWT válido para testes."""
     from jose import jwt
+
     from src.config import settings
 
     payload = {
         "sub": str(sample_user_id),
-        "exp": datetime.now(timezone.utc) + timedelta(hours=24),
+        "exp": datetime.now(UTC) + timedelta(hours=24),
     }
     return jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
 
@@ -217,11 +217,12 @@ def valid_jwt_token(sample_user_id):
 def expired_jwt_token(sample_user_id):
     """Gera token JWT expirado para testes."""
     from jose import jwt
+
     from src.config import settings
 
     payload = {
         "sub": str(sample_user_id),
-        "exp": datetime.now(timezone.utc) - timedelta(hours=1),
+        "exp": datetime.now(UTC) - timedelta(hours=1),
     }
     return jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
 
@@ -233,12 +234,12 @@ def expired_jwt_token(sample_user_id):
 @pytest.fixture
 def mock_oauth_client():
     """Mock do cliente OAuth2."""
-    with patch("app.auth.service.OAuth2Client") as mock:
+    with patch("src.auth.service.OAuth2Client") as mock:
         yield mock
 
 
 @pytest.fixture
 def mock_gemini_client():
     """Mock do cliente Gemini."""
-    with patch("app.plans.service._gemini") as mock:
+    with patch("src.plans.service._gemini") as mock:
         yield mock

@@ -2,7 +2,7 @@
 Testes unitários para o módulo auth/schemas.py
 """
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -78,7 +78,7 @@ class TestUserOut:
     def test_user_out_creation(self):
         # Arrange
         user_id = uuid.uuid4()
-        created_at = datetime.now(timezone.utc)
+        created_at = datetime.now(UTC)
         data = {
             "id": user_id,
             "name": "Test User",
@@ -104,7 +104,7 @@ class TestUserOut:
             "name": "Test User",
             "email": "test@example.com",
             "photo_url": None,
-            "created_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(UTC),
         }
 
         # Act
@@ -128,7 +128,7 @@ class TestUserOut:
             "id": uuid.uuid4(),
             "name": "Test User",
             # missing email
-            "created_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(UTC),
         }
 
         # Act & Assert

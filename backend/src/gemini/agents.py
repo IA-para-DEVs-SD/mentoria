@@ -4,7 +4,7 @@ import os
 
 from pydantic import BaseModel
 from pydantic_ai import Agent
-from pydantic_ai.models.google import GoogleModel, GoogleModelName
+from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.providers.google import GoogleProvider
 
 from src.config import settings
