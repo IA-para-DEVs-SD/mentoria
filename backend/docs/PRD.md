@@ -376,6 +376,25 @@ _Mensagens sugeridas:_
 
 > **Nota de implementação:** O logout é client-side (remoção do token do localStorage). Não há endpoint de logout no backend, pois o JWT é stateless — a invalidação ocorre pela remoção local e pela expiração natural do token.
 
+### US 9: Fallback de Indisponibilidade da IA
+
+**Como** usuário,  
+**Eu quero** ser informado quando a IA estiver indisponível após múltiplas tentativas,  
+**Para que** eu não fique preso em um loop de erros e saiba que devo tentar mais tarde.
+
+**Critérios de Aceite:**
+1. A Mentoria.IA DEVERÁ implementar retry automático de até 3 tentativas na chamada à API Gemini (geração de plano e geração de mais ações).
+2. A Mentoria.IA DEVERÁ aguardar intervalo progressivo entre tentativas (1s, 2s, 4s).
+3. Após 3 falhas consecutivas, o backend DEVERÁ retornar erro 503 com mensagem clara.
+4. As falhas DEVEM ser registradas em log para monitoramento.
+5. Na tela de geração de plano: após 3 tentativas falhas do botão "Tentar novamente", A Mentoria.IA DEVERÁ substituir o botão por mensagem: "O serviço de IA está temporariamente indisponível. Tente novamente mais tarde."
+6. Na tela de detalhes do plano: ao gerar mais ações, após falha, A Mentoria.IA DEVERÁ exibir toast com mensagem: "Não foi possível gerar novas ações. Tente novamente mais tarde."
+7. Após exibir mensagem de indisponibilidade, A Mentoria.IA DEVE oferecer botão para voltar à Home.
+
+_Mensagens sugeridas:_
+- Indisponibilidade: "O serviço de IA está temporariamente indisponível. Tente novamente mais tarde."
+- Falha ao gerar ações: "Não foi possível gerar novas ações. Tente novamente mais tarde."
+
 ---
 
 ## 5. Requisitos Não-Funcionais a página inicial em menos de 3 segundos.
@@ -493,7 +512,7 @@ _Mensagens sugeridas:_
 
 ### 7.1 Critérios de Aceite do Produto
 
-- [ ] Todos os requisitos funcionais (US 1 à 7) implementados e testados
+- [ ] Todos os requisitos funcionais (US 1 à 9) implementados e testados
 - [ ] Todos os requisitos não-funcionais atendidos
 - [ ] Interface de usuário intuitiva e acessível (WCAG 2.1 nível A)
 - [ ] Fluxo de primeiro acesso funcionando corretamente
