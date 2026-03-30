@@ -1,8 +1,8 @@
 {
   "enabled": true,
   "name": "Run Backend Tests",
-  "description": "Executa os testes unitários do backend via Docker quando um arquivo de teste é editado.",
-  "version": "1",
+  "description": "Executa os testes unitários do backend via Docker quando um arquivo de teste é editado. Se houver falhas, pede ao agente para corrigi-las.",
+  "version": "2",
   "when": {
     "type": "fileEdited",
     "patterns": [
@@ -10,8 +10,7 @@
     ]
   },
   "then": {
-    "type": "runCommand",
-    "command": "docker compose exec backend python3 -m pytest tests/ --tb=short -q || true",
-    "timeout": 120
+    "type": "askAgent",
+    "prompt": "Execute os testes do backend com: docker compose exec backend python3 -m pytest tests/ --tb=short -q. Se houver falhas, analise os erros e corrija os testes automaticamente. Após corrigir, rode os testes novamente para confirmar que todos passam."
   }
 }

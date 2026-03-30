@@ -5,6 +5,7 @@ PATCH/DELETE /plans/{id}/actions/{id}, e exception handler.
 
 Issue #84
 """
+import sys
 import uuid
 from datetime import date
 from unittest.mock import MagicMock, patch
@@ -22,7 +23,6 @@ from src.gemini.schemas import GeminiActionItem, GeminiGapItem, GeminiPlanRespon
 from src.main import app
 from src.plans.models import Action, Gap, Plan
 from src.profile.models import Education, Experience, Profile
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -223,57 +223,83 @@ class TestPostProfile:
 # ---------------------------------------------------------------------------
 
 class TestGeminiClientErrors:
+    @staticmethod
+    def _get_real_module():
+        """Reimporta o módulo real removendo mocks de sys.modules temporariamente."""
+        import importlib
+
+        saved = {}
+        for key in list(sys.modules.keys()):
+            if key.startswith("src.gemini"):
+                saved[key] = sys.modules.pop(key)
+        try:
+            mod = importlib.import_module("src.gemini.client")
+            return mod, saved
+        except Exception:
+            sys.modules.update(saved)
+            raise
+
+    @staticmethod
+    def _restore_modules(saved):
+        for key in list(sys.modules.keys()):
+            if key.startswith("src.gemini") and key not in saved:
+                del sys.modules[key]
+        sys.modules.update(saved)
+
     def test_timeout_raises_502(self):
         from concurrent.futures import TimeoutError as FuturesTimeoutError
-        from src.gemini.client import GeminiClient
+
         from fastapi import HTTPException
 
-        gemini_client = GeminiClient()
-        mock_profile = MagicMock()
-        mock_profile.experiences = []
-        mock_profile.educations = []
-        mock_profile.skills = []
-        mock_profile.career_goal = "Test"
+        mod, saved = self._get_real_module()
+        try:
+            gemini_client = mod.GeminiClient()
+            mock_profile = MagicMock()
+            mock_profile.experiences = []
+            mock_profile.educations = []
+            mock_profile.skills = []
+            mock_profile.career_goal = "Test"
 
-        with patch("src.gemini.client.ThreadPoolExecutor") as mock_executor_class:
-            mock_executor = MagicMock()
-            mock_executor.__enter__ = MagicMock(return_value=mock_executor)
-            mock_executor.__exit__ = MagicMock(return_value=False)
-            mock_future = MagicMock()
-            mock_future.result.side_effect = FuturesTimeoutError()
-            mock_executor.submit.return_value = mock_future
-            mock_executor_class.return_value = mock_executor
+            original_agent = mod.roadmap_agent
+            mock_agent = MagicMock()
+            mock_agent.run_sync.side_effect = FuturesTimeoutError()
+            mod.roadmap_agent = mock_agent
+            try:
+                with pytest.raises(HTTPException) as exc_info:
+                    gemini_client.generate_plan(mock_profile, [])
 
-            with pytest.raises(HTTPException) as exc_info:
-                gemini_client.generate_plan(mock_profile, [])
-
-            assert exc_info.value.status_code == 502
-            assert "indisponível" in exc_info.value.detail
+                assert exc_info.value.status_code == 502
+                assert "indisponível" in exc_info.value.detail
+            finally:
+                mod.roadmap_agent = original_agent
+        finally:
+            self._restore_modules(saved)
 
     def test_generic_exception_raises_502(self):
-        from src.gemini.client import GeminiClient
         from fastapi import HTTPException
 
-        gemini_client = GeminiClient()
-        mock_profile = MagicMock()
-        mock_profile.experiences = []
-        mock_profile.educations = []
-        mock_profile.skills = []
-        mock_profile.career_goal = "Test"
+        mod, saved = self._get_real_module()
+        try:
+            gemini_client = mod.GeminiClient()
+            mock_profile = MagicMock()
+            mock_profile.experiences = []
+            mock_profile.educations = []
+            mock_profile.skills = []
+            mock_profile.career_goal = "Test"
 
-        with patch("src.gemini.client.ThreadPoolExecutor") as mock_executor_class:
-            mock_executor = MagicMock()
-            mock_executor.__enter__ = MagicMock(return_value=mock_executor)
-            mock_executor.__exit__ = MagicMock(return_value=False)
-            mock_future = MagicMock()
-            mock_future.result.side_effect = RuntimeError("API error")
-            mock_executor.submit.return_value = mock_future
-            mock_executor_class.return_value = mock_executor
+            original_agent = mod.roadmap_agent
+            mock_agent = MagicMock()
+            mock_agent.run_sync.side_effect = RuntimeError("API error")
+            mod.roadmap_agent = mock_agent
+            try:
+                with pytest.raises(HTTPException) as exc_info:
+                    gemini_client.generate_plan(mock_profile, [])
 
-            with pytest.raises(HTTPException) as exc_info:
-                gemini_client.generate_plan(mock_profile, [])
-
-            assert exc_info.value.status_code == 502
+                assert exc_info.value.status_code == 502
+            finally:
+                mod.roadmap_agent = original_agent
+        finally:
+            self._restore_modules(saved)
 
 
 # ---------------------------------------------------------------------------
