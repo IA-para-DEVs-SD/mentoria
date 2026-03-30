@@ -8,7 +8,7 @@ Ao criar issues para o board do projeto ([Board do Projeto](https://github.com/o
 
 ## Referência
 
-Todas as issues devem estar alinhadas com as User Stories e critérios de aceite definidos no PRD: #[[file:backend/docs/Requisitos.md]]
+Todas as issues devem estar alinhadas com as User Stories e critérios de aceite definidos no PRD: #[[file:backend/docs/PRD.md]]
 
 ## Formato do Título
 
@@ -52,6 +52,7 @@ Informações adicionais, restrições, dependências ou links relevantes.
 6. Incluir labels adequadas: `frontend`, `backend`, `ia`, `infra`, `docs`, `bug`.
 7. Toda issue deve ser atribuída a pelo menos um responsável.
 8. **Toda issue criada DEVE ser vinculada ao board do projeto** usando o comando `gh project item-add 24 --owner IA-para-DEVs-SD --url <URL_DA_ISSUE>` imediatamente após a criação da issue.
+9. **Após criar a issue, DEVE ser criada uma branch local** seguindo o padrão `feature/issue-X`, onde `X` é o número da issue criada no GitHub. A branch deve ser criada a partir da `main` atualizada.
 
 ## Vinculação ao Board
 
@@ -62,6 +63,18 @@ gh project item-add 24 --owner IA-para-DEVs-SD --url <URL_DA_ISSUE_CRIADA>
 ```
 
 Isso garante que a issue apareça automaticamente no [board do projeto](https://github.com/orgs/IA-para-DEVs-SD/projects/24).
+
+## Criação de Branch
+
+Após criar a issue e vinculá-la ao board, crie a branch local a partir da `main` atualizada:
+
+```bash
+git checkout main
+git pull
+git checkout -b feature/issue-<NUMERO_DA_ISSUE>
+```
+
+Exemplo: para a issue #42, a branch será `feature/issue-42`.
 
 ## Exemplos
 
