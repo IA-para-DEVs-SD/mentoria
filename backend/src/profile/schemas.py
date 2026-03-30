@@ -5,7 +5,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -73,11 +72,10 @@ class ExperienceIn(BaseModel):
         today = date.today()
         if self.start_date > today:
             raise ValueError("start_date não pode ser futura")
-        if self.end_date is not None:
-            if self.end_date < self.start_date:
-                raise ValueError("end_date deve ser maior ou igual a start_date")
-            if self.end_date > today:
-                raise ValueError("end_date não pode ser futura")
+        if self.end_date is not None and self.end_date < self.start_date:
+            raise ValueError("end_date deve ser maior ou igual a start_date")
+        if self.end_date is not None and self.end_date > today:
+            raise ValueError("end_date não pode ser futura")
         return self
 
 
@@ -99,9 +97,8 @@ class EducationIn(BaseModel):
         today = date.today()
         if self.start_date > today:
             raise ValueError("start_date não pode ser futura")
-        if self.end_date is not None:
-            if self.end_date < self.start_date:
-                raise ValueError("end_date deve ser maior ou igual a start_date")
+        if self.end_date is not None and self.end_date < self.start_date:
+            raise ValueError("end_date deve ser maior ou igual a start_date")
         return self
 
 

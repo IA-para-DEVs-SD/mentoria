@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from src.profile.models import Profile
 
 
-def _format_profile_section(profile: "Profile") -> str:
+def _format_profile_section(profile: Profile) -> str:
     experiences = []
     for exp in profile.experiences:
         period = str(exp.start_date)
@@ -38,7 +38,7 @@ def _format_profile_section(profile: "Profile") -> str:
     return "\n".join(lines)
 
 
-def _format_rejections_section(rejections: list["Rejection"]) -> str:
+def _format_rejections_section(rejections: list[Rejection]) -> str:
     if not rejections:
         return "REJEIÇÕES ANTERIORES (evitar conteúdo similar):\n- Nenhuma"
 
@@ -47,7 +47,7 @@ def _format_rejections_section(rejections: list["Rejection"]) -> str:
     return "\n".join(lines)
 
 
-def build_plan_prompt(profile: "Profile", rejections: list["Rejection"]) -> str:
+def build_plan_prompt(profile: Profile, rejections: list[Rejection]) -> str:
     """Monta o prompt para geração de plano completo."""
     profile_section = _format_profile_section(profile)
     rejections_section = _format_rejections_section(rejections)
@@ -73,9 +73,9 @@ Retorne um JSON com o seguinte schema:
 
 
 def build_actions_prompt(
-    profile: "Profile",
-    existing_actions: list["Action"],
-    rejections: list["Rejection"],
+    profile: Profile,
+    existing_actions: list[Action],
+    rejections: list[Rejection],
 ) -> str:
     """Monta o prompt para geração de mais ações."""
     profile_section = _format_profile_section(profile)

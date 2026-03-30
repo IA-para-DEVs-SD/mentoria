@@ -2,7 +2,7 @@
 Testes unitários para o módulo plans/schemas.py
 """
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -121,7 +121,7 @@ class TestPlanOut:
         data = {
             "id": uuid.uuid4(),
             "name": "Plano de Carreira",
-            "created_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(UTC),
             "progress": 50,
             "gaps": [],
             "actions": [],
@@ -153,7 +153,7 @@ class TestPlanSummary:
         data = {
             "id": uuid.uuid4(),
             "name": "Plano de Carreira",
-            "created_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(UTC),
             "progress": 75,
         }
 

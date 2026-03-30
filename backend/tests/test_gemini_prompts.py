@@ -2,9 +2,6 @@
 Testes unitários para o módulo gemini/prompts.py
 """
 from datetime import date
-from unittest.mock import MagicMock
-
-import pytest
 
 from src.gemini.prompts import (
     _format_profile_section,

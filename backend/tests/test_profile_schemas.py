@@ -1,8 +1,7 @@
 """
 Testes unitários para o módulo profile/schemas.py
 """
-import uuid
-from datetime import date, datetime
+from datetime import date
 
 import pytest
 from pydantic import ValidationError
@@ -11,9 +10,7 @@ from src.profile.schemas import (
     CareerGoal,
     EducationIn,
     EducationLevel,
-    EducationOut,
     ExperienceIn,
-    ExperienceOut,
     ProfileIn,
     ProfileOut,
     Seniority,

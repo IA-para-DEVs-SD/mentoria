@@ -3,8 +3,6 @@ Testes unitários para o módulo profile/service.py
 """
 from datetime import date
 
-import pytest
-
 from src.profile.models import Education, Experience, Profile
 from src.profile.schemas import (
     CareerGoal,

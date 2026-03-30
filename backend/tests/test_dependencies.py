@@ -1,14 +1,12 @@
 """
 Testes unitários para o módulo dependencies.py
 """
-import time
 from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 
-from src.auth.models import User
 from src.dependencies import get_current_user, get_db, rate_limiter
 
 
@@ -31,7 +29,7 @@ class TestGetDb:
 
     def test_closes_session_after_use(self):
         # Arrange
-        with patch("app.dependencies.SessionLocal") as mock_session_local:
+        with patch("src.dependencies.SessionLocal") as mock_session_local:
             mock_session = MagicMock()
             mock_session_local.return_value = mock_session
 
@@ -119,7 +117,7 @@ class TestRateLimiter:
         mock_pipe.__exit__ = MagicMock(return_value=False)
         mock_pipe.execute.return_value = [None, None, 10, None]  # 10 requests
 
-        with patch("app.dependencies.redis") as mock_redis_module:
+        with patch("src.dependencies.redis") as mock_redis_module:
             mock_redis_module.from_url.return_value = mock_redis
 
             # Act & Assert (should not raise)
@@ -134,7 +132,7 @@ class TestRateLimiter:
         mock_pipe.__exit__ = MagicMock(return_value=False)
         mock_pipe.execute.return_value = [None, None, 61, None]  # 61 requests (over limit)
 
-        with patch("app.dependencies.redis") as mock_redis_module:
+        with patch("src.dependencies.redis") as mock_redis_module:
             mock_redis_module.from_url.return_value = mock_redis
 
             # Act & Assert
@@ -154,7 +152,7 @@ class TestRateLimiter:
         mock_pipe.__exit__ = MagicMock(return_value=False)
         mock_pipe.execute.return_value = [None, None, 1, None]
 
-        with patch("app.dependencies.redis") as mock_redis_module:
+        with patch("src.dependencies.redis") as mock_redis_module:
             mock_redis_module.from_url.return_value = mock_redis
 
             # Act
@@ -175,7 +173,7 @@ class TestRateLimiter:
         mock_pipe.__exit__ = MagicMock(return_value=False)
         mock_pipe.execute.return_value = [None, None, 1, None]
 
-        with patch("app.dependencies.redis") as mock_redis_module:
+        with patch("src.dependencies.redis") as mock_redis_module:
             mock_redis_module.from_url.return_value = mock_redis
 
             # Act
