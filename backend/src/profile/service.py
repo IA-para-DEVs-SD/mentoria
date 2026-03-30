@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from src.profile.models import Education, Experience, Profile
-from src.profile.schemas import EducationIn, ExperienceIn, ProfileIn, ProfileOut
+from src.profile.schemas import ProfileIn, ProfileOut
 
 
 class ProfileService:

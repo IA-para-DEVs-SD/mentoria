@@ -1,10 +1,9 @@
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
-from src.auth.schemas import TokenResponse
 from src.auth.service import AuthService
 from src.config import settings
 from src.dependencies import get_db

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FuturesTimeoutError
 from typing import TYPE_CHECKING
 
 from fastapi import HTTPException
@@ -26,8 +27,8 @@ _AI_UNAVAILABLE = "Serviço de IA indisponível. Tente novamente."
 class GeminiClient:
     def generate_plan(
         self,
-        profile: "Profile",
-        rejections: list["Rejection"],
+        profile: Profile,
+        rejections: list[Rejection],
     ) -> GeminiPlanResponse:
         prompt = build_plan_prompt(profile, rejections)
         logger.info("=== PROMPT GEMINI (generate_plan) ===\n%s\n=== FIM PROMPT ===", prompt)
@@ -45,9 +46,9 @@ class GeminiClient:
 
     def generate_actions(
         self,
-        profile: "Profile",
-        existing_actions: list["Action"],
-        rejections: list["Rejection"],
+        profile: Profile,
+        existing_actions: list[Action],
+        rejections: list[Rejection],
     ) -> list[GeminiActionItem]:
         prompt = build_actions_prompt(profile, existing_actions, rejections)
         try:

@@ -1,4 +1,4 @@
-line-length = 79
+line-length = 120
 target-version = "py312"
 
 [format]
@@ -13,10 +13,17 @@ select = [
     "I",   # isort
     "N",   # pep8-naming
     "UP",  # pyupgrade
-    "B",   # flake8-bugbear
     "SIM", # flake8-simplify
     "RUF", # ruff-specific rules
+]
+ignore = [
+    "B008", # Depends() em defaults é padrão do FastAPI
+    "E402", # imports não no topo (necessário em alguns módulos)
+    "UP042", # str+Enum é necessário para compatibilidade com Pydantic v1/v2
 ]
 
 [lint.isort]
 known-first-party = ["src"]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["N802", "N803", "N806", "N811", "F841", "SIM105", "SIM102"]

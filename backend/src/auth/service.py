@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -70,7 +70,7 @@ class AuthService:
     def create_jwt(self, user_id: UUID) -> str:
         payload = {
             "sub": str(user_id),
-            "exp": datetime.now(timezone.utc) + timedelta(hours=24),
+            "exp": datetime.now(UTC) + timedelta(hours=24),
         }
         return jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
 

@@ -9,11 +9,11 @@ import pytest
 from fastapi import HTTPException
 
 # Mock the gemini modules before importing PlanService
-sys.modules["app.gemini.agents"] = MagicMock()
-sys.modules["app.gemini.client"] = MagicMock()
+sys.modules["src.gemini.agents"] = MagicMock()
+sys.modules["src.gemini.client"] = MagicMock()
 
 from src.gemini.schemas import GeminiActionItem, GeminiGapItem, GeminiPlanResponse
-from src.plans.models import Action, Gap, Plan, Rejection
+from src.plans.models import Action, Plan, Rejection
 from src.plans.service import PlanService, calculate_progress
 
 
@@ -197,7 +197,7 @@ class TestPlanServiceGeneratePlan:
             ],
         )
 
-        with patch("app.plans.service._gemini") as mock_gemini:
+        with patch("src.plans.service._gemini") as mock_gemini:
             mock_gemini.generate_plan.return_value = mock_response
 
             # Act
@@ -360,7 +360,7 @@ class TestPlanServiceGenerateMoreActions:
             )
         ]
 
-        with patch("app.plans.service._gemini") as mock_gemini:
+        with patch("src.plans.service._gemini") as mock_gemini:
             mock_gemini.generate_actions.return_value = new_actions
 
             # Act

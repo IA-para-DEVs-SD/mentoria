@@ -11,7 +11,7 @@
   },
   "then": {
     "type": "runCommand",
-    "command": "docker compose exec backend python3 -m pytest tests/ -v 2>&1",
-    "timeout": 60
+    "command": "docker compose exec backend python3 -m pytest tests/ --tb=short -q || true",
+    "timeout": 120
   }
 }

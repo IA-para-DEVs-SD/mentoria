@@ -1,7 +1,7 @@
 """
 Testes unitários para o módulo profile/models.py
 """
-from datetime import date, datetime
+from datetime import date
 
 import pytest
 
