@@ -10,9 +10,9 @@ from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
 
-from app.gemini.agents import actions_agent, roadmap_agent
-from app.gemini.prompts import build_actions_prompt, build_plan_prompt
-from app.gemini.schemas import GeminiActionItem, GeminiPlanResponse
+from src.gemini.agents import actions_agent, roadmap_agent
+from src.gemini.prompts import build_actions_prompt, build_plan_prompt
+from src.gemini.schemas import GeminiActionItem, GeminiPlanResponse
 
 if TYPE_CHECKING:
     from src.plans.models import Action, Rejection
