@@ -412,5 +412,8 @@ frontend/dist/
 frontend/.env
 frontend/.env.local
 
+# Backend secrets
+backend/.env
+
 # Snapshots
 .snapshots/

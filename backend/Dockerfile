@@ -17,6 +17,10 @@ COPY . .
 
 RUN chmod +x entrypoint.sh
 
+# Roda como usuário não-root
+RUN adduser --disabled-password --gecos "" appuser
+USER appuser
+
 EXPOSE 8000
 
 CMD ["./entrypoint.sh"]

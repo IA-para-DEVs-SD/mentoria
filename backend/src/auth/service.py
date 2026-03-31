@@ -70,7 +70,7 @@ class AuthService:
     def create_jwt(self, user_id: UUID) -> str:
         payload = {
             "sub": str(user_id),
-            "exp": datetime.now(UTC) + timedelta(hours=24),
+            "exp": datetime.now(UTC) + timedelta(hours=settings.JWT_EXPIRATION_HOURS),
         }
         return jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
 
