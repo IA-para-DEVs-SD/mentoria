@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str  # obrigatório — sem fallback
     JWT_EXPIRATION_HOURS: int = 1
     GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
     FRONTEND_URL: str = "http://localhost:5173"
     DEBUG: bool = False
 

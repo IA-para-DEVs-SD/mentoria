@@ -13,7 +13,7 @@ from src.gemini.schemas import GeminiActionItem, GeminiPlanResponse
 os.environ.setdefault("GEMINI_API_KEY", settings.GEMINI_API_KEY)
 
 _model = GoogleModel(
-    "gemini-2.5-flash",
+    settings.GEMINI_MODEL,
     provider=GoogleProvider(api_key=settings.GEMINI_API_KEY),
 )
 
