@@ -16,17 +16,9 @@
 
 ## 🛠️ Tecnologias
 
-| Camada | Tecnologia | Versão mínima |
-|---|---|---|
-| Frontend | Vue.js 3 + PrimeVue 4 + Tailwind CSS 4 | — |
-| State | Pinia | — |
-| Build | Vite 7 + TypeScript 5.9 | Node.js **20.19** ou **22.12+** |
-| Backend | FastAPI | Python **3.12** |
-| ORM | SQLAlchemy + Alembic | — |
-| Banco de Dados | SQLite | — |
-| LLM | Google Gemini 2.5 Flash via PydanticAI | — |
-| Autenticação | Google OAuth 2.0 + JWT | — |
-| Infra | Docker Compose | Docker **24+** |
+> Para detalhes completos de cada stack (versões, bibliotecas e funções), consulte:
+> - [Stack do Backend](backend/docs/ARCHITECTURE.md#stack)
+> - [Stack do Frontend](frontend/docs/ARCHITECTURE.md#stack)
 
 ---
 
