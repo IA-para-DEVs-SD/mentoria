@@ -18,13 +18,13 @@ defineEmits<{
 
 <template>
   <div class="space-y-4">
-    <h3 class="font-bold text-gray-900 flex items-center gap-2">
-      <Target class="w-4 h-4 text-indigo-600" /> Plano de Ação
+    <h3 class="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+      <Target class="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> Plano de Ação
     </h3>
 
-    <div class="relative space-y-3 pl-5 before:absolute before:left-[9px] before:top-3 before:bottom-3 before:w-0.5 before:bg-gray-200">
+    <div class="relative space-y-3 pl-5 before:absolute before:left-[9px] before:top-3 before:bottom-3 before:w-0.5 before:bg-gray-200 dark:before:bg-slate-700">
       <div v-for="action in actions" :key="action.id" class="relative">
-        <div class="absolute -left-5 top-5 w-2.5 h-2.5 rounded-full border-2 border-indigo-400 bg-white z-10" />
+        <div class="absolute -left-5 top-5 w-2.5 h-2.5 rounded-full border-2 border-indigo-400 bg-white dark:bg-slate-900 z-10" />
         <ActionItem
           :action="action"
           @toggle="$emit('toggle', action.id)"

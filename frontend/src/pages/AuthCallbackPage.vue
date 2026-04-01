@@ -25,10 +25,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-100">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-slate-900 dark:to-slate-800">
     <div class="text-center space-y-4">
       <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" />
-      <p class="text-gray-600 text-sm">Autenticando...</p>
+      <p class="text-gray-600 dark:text-gray-300 text-sm">Autenticando...</p>
     </div>
   </div>
 </template>

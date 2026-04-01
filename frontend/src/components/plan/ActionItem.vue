@@ -21,7 +21,7 @@ const PRIORITY_SEVERITY: Record<string, 'danger' | 'warn' | 'success'> = {
 
 <template>
   <div
-    :class="['p-4 rounded-xl border transition-all', action.status === 'concluida' ? 'bg-gray-50 opacity-60' : 'bg-white border-gray-200 shadow-sm']"
+    :class="['p-4 rounded-xl border transition-all', action.status === 'concluida' ? 'bg-gray-50 dark:bg-slate-800/50 opacity-60' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 shadow-sm']"
   >
     <div class="flex items-start gap-3">
       <button
@@ -38,15 +38,15 @@ const PRIORITY_SEVERITY: Record<string, 'danger' | 'warn' | 'success'> = {
           <Tag :value="action.priority" :severity="PRIORITY_SEVERITY[action.priority]" class="!text-[10px]" />
           <Tag :value="action.category" severity="info" class="!text-[10px]" />
         </div>
-        <h4 :class="['font-semibold text-sm', action.status === 'concluida' && 'line-through text-gray-400']">
+        <h4 :class="['font-semibold text-sm', action.status === 'concluida' && 'line-through text-gray-400 dark:text-gray-500']">
           {{ action.title }}
         </h4>
-        <p class="text-xs text-gray-600">{{ action.objective }}</p>
-        <p class="text-xs text-gray-400 italic">{{ action.context }}</p>
+        <p class="text-xs text-gray-600 dark:text-gray-300">{{ action.objective }}</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic">{{ action.context }}</p>
       </div>
 
       <button
-        class="shrink-0 p-1 text-gray-300 hover:text-red-500"
+        class="shrink-0 p-1 text-gray-300 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"
         aria-label="Excluir ação"
         @click="$emit('delete')"
       >

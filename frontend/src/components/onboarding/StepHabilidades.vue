@@ -37,7 +37,7 @@ function isSugestaoAdded(s: string) {
 <template>
   <div class="space-y-6">
     <h3 class="text-lg font-semibold flex items-center gap-2">
-      <Lightbulb class="w-5 h-5 text-indigo-600" /> Habilidades
+      <Lightbulb class="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Habilidades
     </h3>
 
     <div class="flex gap-2">
@@ -50,7 +50,7 @@ function isSugestaoAdded(s: string) {
       <Button icon="pi pi-plus" severity="secondary" @click="addHabilidade()" :disabled="!input.trim()" />
     </div>
 
-    <div v-if="model.length === 0" class="text-sm text-gray-500">
+    <div v-if="model.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
       Adicione pelo menos uma habilidade.
     </div>
 
@@ -65,7 +65,7 @@ function isSugestaoAdded(s: string) {
     </div>
 
     <div class="space-y-2">
-      <p class="text-sm text-gray-500">Sugestões:</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Sugestões:</p>
       <div class="flex flex-wrap gap-2">
         <button
           v-for="s in SUGESTOES"
@@ -75,7 +75,7 @@ function isSugestaoAdded(s: string) {
             'px-3 py-1.5 rounded-full text-sm transition-all border',
             isSugestaoAdded(s)
               ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200',
+              : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-slate-600 hover:bg-gray-200 dark:hover:bg-slate-600',
           ]"
           @click="isSugestaoAdded(s) ? undefined : addHabilidade(s)"
         >

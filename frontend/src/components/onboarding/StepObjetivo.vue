@@ -15,10 +15,10 @@ const GOALS: { value: CareerGoal; label: string; icon: string }[] = [
 <template>
   <div class="space-y-6">
     <h3 class="text-lg font-semibold flex items-center gap-2">
-      <Target class="w-5 h-5 text-indigo-600" /> Objetivo de Carreira
+      <Target class="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Objetivo de Carreira
     </h3>
 
-    <p class="text-sm text-gray-500">Selecione um objetivo para continuar.</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">Selecione um objetivo para continuar.</p>
 
     <div class="grid grid-cols-1 gap-3">
       <button
@@ -28,8 +28,8 @@ const GOALS: { value: CareerGoal; label: string; icon: string }[] = [
         :class="[
           'text-left p-4 rounded-xl border-2 transition-all',
           model === obj.value
-            ? 'border-indigo-600 bg-indigo-50'
-            : 'border-gray-200 hover:border-gray-300',
+            ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950'
+            : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600',
         ]"
         @click="model = obj.value"
       >

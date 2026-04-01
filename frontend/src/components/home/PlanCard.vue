@@ -3,6 +3,9 @@ import type { PlanSummary } from '@/types'
 import ProgressBar from 'primevue/progressbar'
 import Button from 'primevue/button'
 import { Trash2, Calendar } from 'lucide-vue-next'
+import { useTheme } from '@/composables/useTheme'
+
+const { isDark } = useTheme()
 
 defineProps<{
   plan: PlanSummary
@@ -20,11 +23,11 @@ function formatDate(iso: string): string {
 </script>
 
 <template>
-  <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-4 shadow-sm">
+  <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-5 space-y-4 shadow-sm">
     <div class="flex items-start justify-between gap-2">
-      <h3 class="font-semibold text-sm text-gray-900 leading-tight">{{ plan.name }}</h3>
+      <h3 class="font-semibold text-sm text-gray-900 dark:text-gray-100 leading-tight">{{ plan.name }}</h3>
       <button
-        class="shrink-0 p-1 text-gray-300 hover:text-red-500"
+        class="shrink-0 p-1 text-gray-300 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"
         aria-label="Excluir plano"
         @click="$emit('delete')"
       >
@@ -32,22 +35,22 @@ function formatDate(iso: string): string {
       </button>
     </div>
 
-    <div class="flex items-center gap-1 text-xs text-gray-400">
+    <div class="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
       <Calendar class="w-3 h-3" />
       <span>{{ formatDate(plan.created_at) }}</span>
     </div>
 
     <div class="space-y-1">
       <div class="flex justify-between text-xs">
-        <span class="text-gray-500">Progresso</span>
-        <span class="font-semibold text-indigo-600">{{ plan.progress }}%</span>
+        <span class="text-gray-500 dark:text-gray-400">Progresso</span>
+        <span class="font-semibold text-indigo-600 dark:text-green-400">{{ plan.progress }}%</span>
       </div>
       <ProgressBar :value="plan.progress" :showValue="false" class="!h-2" />
     </div>
 
     <Button
       label="Ver Detalhes"
-      severity="secondary"
+      :severity="isDark ? 'success' : 'secondary'"
       outlined
       size="small"
       class="w-full"

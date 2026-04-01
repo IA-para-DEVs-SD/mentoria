@@ -25,13 +25,13 @@ if (model.value.length === 0) addExperience()
 <template>
   <div class="space-y-6">
     <h3 class="text-lg font-semibold flex items-center gap-2">
-      <Briefcase class="w-5 h-5 text-indigo-600" /> Trajetória Profissional
+      <Briefcase class="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Trajetória Profissional
     </h3>
 
     <div
       v-for="(exp, i) in model"
       :key="i"
-      class="bg-white border border-gray-200 rounded-xl p-4 space-y-4 relative"
+      class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 space-y-4 relative"
     >
       <button
         v-if="model.length > 1"
@@ -45,11 +45,11 @@ if (model.value.length === 0) addExperience()
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Cargo *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Cargo *</label>
           <InputText v-model="exp.role" placeholder="Ex: Desenvolvedor Frontend" class="w-full" />
         </div>
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Senioridade *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Senioridade *</label>
           <Select
             v-model="exp.seniority"
             :options="SENIORITY_OPTIONS"
@@ -62,13 +62,13 @@ if (model.value.length === 0) addExperience()
       </div>
 
       <div class="space-y-1">
-        <label class="text-sm font-medium text-gray-700">Empresa</label>
+        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Empresa</label>
         <InputText v-model="exp.company" placeholder="Ex: Empresa XYZ" class="w-full" />
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Data de Início *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data de Início *</label>
           <DatePicker
             v-model="exp.start_date"
             view="month"
@@ -79,7 +79,7 @@ if (model.value.length === 0) addExperience()
           />
         </div>
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Data de Fim</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data de Fim</label>
           <DatePicker
             v-model="exp.end_date"
             view="month"

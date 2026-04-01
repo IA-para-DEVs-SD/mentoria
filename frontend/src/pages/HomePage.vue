@@ -47,9 +47,9 @@ function handleDelete(planId: string) {
 
 <template>
   <DefaultLayout>
-    <div class="w-full max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
+    <div class="w-full max-w-3xl mx-auto p-4 sm:p-6 space-y-6 dark:bg-slate-900 dark:rounded-xl">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold">Meus Planos</h1>
+        <h1 class="text-2xl font-bold dark:text-gray-100">Meus Planos</h1>
         <Button
           v-if="plans.length > 0"
           label="Gerar Novo Plano"

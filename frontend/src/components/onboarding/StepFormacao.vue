@@ -25,13 +25,13 @@ if (model.value.length === 0) addEducation()
 <template>
   <div class="space-y-6">
     <h3 class="text-lg font-semibold flex items-center gap-2">
-      <GraduationCap class="w-5 h-5 text-indigo-600" /> Formação Acadêmica
+      <GraduationCap class="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Formação Acadêmica
     </h3>
 
     <div
       v-for="(form, i) in model"
       :key="i"
-      class="bg-white border border-gray-200 rounded-xl p-4 space-y-4 relative"
+      class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 space-y-4 relative"
     >
       <button
         v-if="model.length > 1"
@@ -45,11 +45,11 @@ if (model.value.length === 0) addEducation()
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Instituição *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Instituição *</label>
           <InputText v-model="form.institution" placeholder="Ex: USP" class="w-full" />
         </div>
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Nível de Formação *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nível de Formação *</label>
           <Select
             v-model="form.level"
             :options="EDUCATION_LEVEL_OPTIONS"
@@ -63,18 +63,18 @@ if (model.value.length === 0) addEducation()
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Título da Formação *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Título da Formação *</label>
           <InputText v-model="form.title" placeholder="Ex: Ciência da Computação" class="w-full" />
         </div>
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Área de Estudo *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Área de Estudo *</label>
           <InputText v-model="form.study_area" placeholder="Ex: Tecnologia" class="w-full" />
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Data de Início *</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data de Início *</label>
           <DatePicker
             v-model="form.start_date"
             dateFormat="dd/mm/yy"
@@ -84,7 +84,7 @@ if (model.value.length === 0) addEducation()
           />
         </div>
         <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-700">Data de Fim</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data de Fim</label>
           <DatePicker
             v-model="form.end_date"
             dateFormat="dd/mm/yy"

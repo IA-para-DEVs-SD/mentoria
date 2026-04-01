@@ -10,7 +10,7 @@ defineEmits<{
 
 <template>
   <button
-    class="flex items-center gap-3 px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+    class="flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 hover:shadow transition-all disabled:opacity-60 disabled:cursor-not-allowed"
     :disabled="loading"
     @click="$emit('click')"
   >
@@ -24,7 +24,7 @@ defineEmits<{
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
     </svg>
-    <span class="text-sm font-medium text-gray-700">
+    <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
       {{ loading ? 'Entrando...' : 'Entrar com Google' }}
     </span>
   </button>

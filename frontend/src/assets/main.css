@@ -1,1 +1,41 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.p-steppanel {
+  background: transparent !important;
+}
+
+.p-steppanels {
+  background: transparent !important;
+}
+
+.dark .p-inputtext {
+  background: #1d293d;
+}
+
+.dark .p-select {
+  background: #1d293d;
+}
+
+.dark .p-step-number {
+  background: #7c86ff !important;
+  color: white !important;
+}
+
+.dark .p-step-active .p-step-title {
+  color: #ffffff;
+}
+
+.dark .p-chip {
+  background-color: var(--color-indigo-600);
+}
+
+.dark .p-button:not(.p-button-outlined):not(.p-button-text) .p-button-label {
+  color: white;
+  font-weight: 700;
+}
+
+.dark .p-button:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
+  color: white;
+}

@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bg-indigo-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+  <div class="bg-indigo-600 dark:bg-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
     <div class="relative z-10 space-y-3">
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold uppercase tracking-wider text-indigo-200">Progresso do Roadmap</span>

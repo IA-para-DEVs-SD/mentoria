@@ -30,7 +30,7 @@ onMounted(generate)
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-700 to-purple-800 px-4">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-700 to-purple-800 dark:from-slate-900 dark:to-indigo-950 px-4">
     <div class="text-center text-white space-y-6 max-w-md">
       <!-- Loading -->
       <template v-if="loading">

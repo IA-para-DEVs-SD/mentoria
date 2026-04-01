@@ -89,8 +89,8 @@ async function handleFinish() {
 
 <template>
   <DefaultLayout>
-    <div class="w-full max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
-      <h2 class="text-2xl font-bold text-center sm:text-left">Mapa de Perfil</h2>
+    <div class="w-full max-w-3xl mx-auto p-4 sm:p-6 space-y-6 dark:bg-slate-900 dark:rounded-xl">
+      <h2 class="text-2xl font-bold text-center sm:text-left dark:text-gray-100">Mapa de Perfil</h2>
 
       <Stepper v-model:value="currentStep" linear>
         <StepList>
