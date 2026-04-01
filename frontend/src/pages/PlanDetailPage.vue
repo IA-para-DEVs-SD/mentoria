@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/authStore'
 import { usePlansStore } from '@/stores/plansStore'
+import { useProfileStore } from '@/stores/profileStore'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
@@ -11,6 +12,7 @@ import PlanHeader from '@/components/plan/PlanHeader.vue'
 import ProgressCard from '@/components/plan/ProgressCard.vue'
 import GapsList from '@/components/plan/GapsList.vue'
 import ActionTimeline from '@/components/plan/ActionTimeline.vue'
+import ProfileAccordion from '@/components/plan/ProfileAccordion.vue'
 import type { ActionStatus } from '@/types'
 
 const route = useRoute()
@@ -20,6 +22,7 @@ const toast = useToast()
 
 const authStore = useAuthStore()
 const plansStore = usePlansStore()
+const profileStore = useProfileStore()
 const { currentPlan } = storeToRefs(plansStore)
 const generatingMore = ref(false)
 
@@ -27,6 +30,7 @@ onMounted(async () => {
   const id = route.params.id as string
   await plansStore.loadPlan(id)
   if (!currentPlan.value) router.replace('/home')
+  if (!profileStore.profile) await profileStore.loadProfile()
 })
 
 function handleToggle(actionId: string) {
@@ -83,6 +87,7 @@ async function handleGenerateMore() {
         @back="router.push('/home')"
       />
       <ProgressCard :progress="currentPlan.progress" />
+      <ProfileAccordion v-if="profileStore.profile" :profile="profileStore.profile" />
       <GapsList :gaps="currentPlan.gaps" />
       <ActionTimeline
         :actions="currentPlan.actions"
