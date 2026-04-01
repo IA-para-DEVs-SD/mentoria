@@ -99,6 +99,159 @@ backend/
 
 ---
 
+## Diagrama UML de Classes
+
+```mermaid
+classDiagram
+    class User {
+        +UUID id
+        +String google_id
+        +String name
+        +String email
+        +String photo_url
+        +DateTime created_at
+    }
+
+    class Profile {
+        +UUID id
+        +UUID user_id
+        +String career_goal
+        +JSON skills
+        +DateTime created_at
+        +DateTime updated_at
+    }
+
+    class Experience {
+        +UUID id
+        +UUID profile_id
+        +String role
+        +String seniority
+        +String company
+        +Date start_date
+        +Date end_date
+    }
+
+    class Education {
+        +UUID id
+        +UUID profile_id
+        +String institution
+        +String level
+        +String title
+        +String study_area
+        +Date start_date
+        +Date end_date
+    }
+
+    class Plan {
+        +UUID id
+        +UUID user_id
+        +String name
+        +Integer progress
+        +DateTime created_at
+    }
+
+    class Action {
+        +UUID id
+        +UUID plan_id
+        +String priority
+        +String category
+        +String title
+        +String objective
+        +String context
+        +String status
+        +Integer sequence
+    }
+
+    class Gap {
+        +UUID id
+        +UUID plan_id
+        +String description
+        +Integer relevance
+    }
+
+    class Rejection {
+        +UUID id
+        +UUID user_id
+        +String category
+        +String action_title
+        +DateTime rejected_at
+    }
+
+    class AuthService {
+        +get_authorization_url() String
+        +handle_callback(code) TokenResponse
+        +verify_token(token) UUID
+    }
+
+    class ProfileService {
+        +get_profile(db, user_id) Profile
+        +upsert_profile(db, user_id, data) Profile
+        +is_complete(profile) bool
+    }
+
+    class PlanService {
+        +generate_plan(db, user_id) Plan
+        +list_plans(db, user_id) List~Plan~
+        +get_plan(db, plan_id, user_id) Plan
+        +delete_plan(db, plan_id, user_id) void
+        +update_action_status(db, action_id, status) Action
+        +delete_action(db, action_id) ProgressOut
+        +generate_more_actions(db, plan_id) List~Action~
+    }
+
+    class GeminiClient {
+        +generate_plan(profile_text, rejections) GeminiPlanResponse
+        +generate_actions(profile_text, plan_context, rejections) List~GeminiActionItem~
+    }
+
+    User "1" -- "0..1" Profile : possui
+    Profile "1" -- "1..*" Experience : contém
+    Profile "1" -- "1..*" Education : contém
+    User "1" -- "0..*" Plan : gera
+    User "1" -- "0..*" Rejection : registra
+    Plan "1" -- "1..*" Action : possui
+    Plan "1" -- "1..*" Gap : identifica
+    PlanService --> GeminiClient : usa
+    PlanService --> Plan : gerencia
+    ProfileService --> Profile : gerencia
+    AuthService --> User : autentica
+```
+
+---
+
+## Diagrama de Sequência — Geração de Plano
+
+```mermaid
+sequenceDiagram
+    actor U as Usuário
+    participant F as Frontend
+    participant API as FastAPI
+    participant PS as PlanService
+    participant GC as GeminiClient
+    participant AI as Google Gemini
+
+    U->>F: Confirma onboarding
+    F->>API: POST /plans (JWT)
+    API->>API: Valida JWT + get_current_user
+    API->>PS: generate_plan(db, user_id)
+    PS->>PS: Carrega perfil + rejeições
+    PS->>GC: generate_plan(profile_text, rejections)
+
+    loop Retry (até 3 tentativas)
+        GC->>AI: Envia prompt estruturado
+        AI-->>GC: Resposta JSON (gaps + ações)
+    end
+
+    GC-->>PS: GeminiPlanResponse
+    PS->>PS: Salva Plan, Actions, Gaps no DB
+    PS-->>API: Plan (com ações e gaps)
+    API-->>F: 201 Created + PlanOut
+    F->>F: Redireciona para /plan/:id
+    F-->>U: Exibe detalhes do plano
+```
+
+---
+
 ## Diagrama de Conexões
 
 ```mermaid

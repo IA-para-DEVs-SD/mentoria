@@ -9,8 +9,9 @@
 | Documento | Descrição |
 |---|---|
 | [PRD — Requisitos do Produto](backend/docs/PRD.md) | User stories, critérios de aceite, casos de uso e requisitos não-funcionais |
-| [Arquitetura do Backend](backend/docs/ARCHITECTURE.md) | Modelo de dados, endpoints, agentes IA e infraestrutura Docker |
-| [Arquitetura do Frontend](frontend/docs/ARCHITECTURE.md) | Stack, estrutura de pastas, rotas, stores e fluxo do usuário |
+| [Arquitetura do Backend](backend/docs/ARCHITECTURE.md) | Modelo de dados, endpoints, diagramas UML e infraestrutura Docker |
+| [Arquitetura do Frontend](frontend/docs/ARCHITECTURE.md) | Stack, estrutura de pastas, diagramas UML e fluxo do usuário |
+| [Fluxograma de Funcionamento](frontend/docs/FLUXOGRAMA.md) | Fluxo completo do usuário na plataforma (login → onboarding → planos) |
 
 ---
 

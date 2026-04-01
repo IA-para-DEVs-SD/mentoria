@@ -96,6 +96,173 @@ frontend/src/
 
 ---
 
+## Diagrama UML de Componentes
+
+```mermaid
+classDiagram
+    class App {
+        <<Vue Component>>
+        Toast
+        ConfirmDialog
+        RouterView
+    }
+
+    class DefaultLayout {
+        <<Layout>>
+        Header (logo + logout)
+        slot conteúdo
+    }
+
+    class LoginPage {
+        <<Page>>
+        GoogleLoginButton
+    }
+
+    class AuthCallbackPage {
+        <<Page>>
+        Processa token OAuth
+    }
+
+    class OnboardingPage {
+        <<Page>>
+        StepTrajetoria
+        StepFormacao
+        StepHabilidades
+        StepObjetivo
+        StepRevisao
+    }
+
+    class LoadingAIPage {
+        <<Page>>
+        Aguarda geração do plano
+    }
+
+    class HomePage {
+        <<Page>>
+        PlanList
+        EmptyState
+    }
+
+    class PlanDetailPage {
+        <<Page>>
+        PlanHeader
+        ProgressCard
+        GapsList
+        ActionTimeline
+    }
+
+    class authStore {
+        <<Pinia Store>>
+        +token: string
+        +login()
+        +logout()
+        +isAuthenticated: bool
+    }
+
+    class profileStore {
+        <<Pinia Store>>
+        +profile: ProfileOut
+        +loadProfile()
+        +saveProfile()
+    }
+
+    class plansStore {
+        <<Pinia Store>>
+        +plans: PlanSummary[]
+        +currentPlan: Plan
+        +loadPlans()
+        +generatePlan()
+        +deletePlan()
+    }
+
+    class authService {
+        <<Service>>
+        +loginWithGoogle()
+        +logout()
+    }
+
+    class profileService {
+        <<Service>>
+        +getProfile()
+        +saveProfile()
+    }
+
+    class planService {
+        <<Service>>
+        +getPlans()
+        +createPlan()
+        +getPlan(id)
+        +deletePlan(id)
+        +updateAction(id, status)
+        +deleteAction(id)
+        +generateActions(planId)
+    }
+
+    class api {
+        <<Axios Instance>>
+        baseURL
+        JWT interceptor
+        401 interceptor
+    }
+
+    App --> DefaultLayout
+    DefaultLayout --> LoginPage
+    DefaultLayout --> OnboardingPage
+    DefaultLayout --> HomePage
+    DefaultLayout --> PlanDetailPage
+    DefaultLayout --> LoadingAIPage
+    DefaultLayout --> AuthCallbackPage
+
+    LoginPage --> authStore
+    AuthCallbackPage --> authStore
+    OnboardingPage --> profileStore
+    HomePage --> plansStore
+    PlanDetailPage --> plansStore
+
+    authStore --> authService
+    profileStore --> profileService
+    plansStore --> planService
+
+    authService --> api
+    profileService --> api
+    planService --> api
+
+    api -->|HTTP REST + JWT| Backend["Backend API"]
+```
+
+---
+
+## Diagrama de Sequência — Fluxo de Autenticação
+
+```mermaid
+sequenceDiagram
+    actor U as Usuário
+    participant F as Frontend (Vue)
+    participant B as Backend (FastAPI)
+    participant G as Google OAuth
+
+    U->>F: Clica "Entrar com Google"
+    F->>B: GET /auth/google/login
+    B->>G: Redireciona para consent screen
+    G-->>U: Exibe tela de permissão
+    U->>G: Autoriza acesso
+    G->>B: GET /auth/google/callback?code=xxx
+    B->>G: Troca code por access_token
+    G-->>B: Dados do usuário (name, email, photo)
+    B->>B: Cria/busca User no DB + gera JWT
+    B->>B: Verifica se perfil existe (has_profile)
+    B-->>F: Redirect /auth/callback?token=jwt&has_profile=true/false
+    F->>F: Salva JWT no localStorage
+
+    alt has_profile = false
+        F->>F: Redireciona para /onboarding
+    else has_profile = true
+        F->>F: Redireciona para /home
+    end
+```
+
+---
+
 ## Diagrama de Conexões
 
 ```mermaid
