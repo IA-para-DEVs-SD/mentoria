@@ -39,3 +39,14 @@
 .dark .p-button:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
   color: white;
 }
+
+.p-accordioncontent-content,
+.p-accordionheader {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.p-accordionpanel {
+  border: none !important;
+}
