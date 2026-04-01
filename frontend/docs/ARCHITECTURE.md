@@ -109,8 +109,8 @@ classDiagram
 
     class DefaultLayout {
         <<Layout>>
-        Header (logo + logout)
-        slot conteúdo
+        Header
+        slot
     }
 
     class LoginPage {
@@ -120,7 +120,7 @@ classDiagram
 
     class AuthCallbackPage {
         <<Page>>
-        Processa token OAuth
+        processToken
     }
 
     class OnboardingPage {
@@ -134,7 +134,7 @@ classDiagram
 
     class LoadingAIPage {
         <<Page>>
-        Aguarda geração do plano
+        loading
     }
 
     class HomePage {
@@ -153,23 +153,23 @@ classDiagram
 
     class authStore {
         <<Pinia Store>>
-        +token: string
+        +String token
+        +bool isAuthenticated
         +login()
         +logout()
-        +isAuthenticated: bool
     }
 
     class profileStore {
         <<Pinia Store>>
-        +profile: ProfileOut
+        +ProfileOut profile
         +loadProfile()
         +saveProfile()
     }
 
     class plansStore {
         <<Pinia Store>>
-        +plans: PlanSummary[]
-        +currentPlan: Plan
+        +PlanSummary[] plans
+        +Plan currentPlan
         +loadPlans()
         +generatePlan()
         +deletePlan()
@@ -191,18 +191,18 @@ classDiagram
         <<Service>>
         +getPlans()
         +createPlan()
-        +getPlan(id)
-        +deletePlan(id)
-        +updateAction(id, status)
-        +deleteAction(id)
-        +generateActions(planId)
+        +getPlan()
+        +deletePlan()
+        +updateAction()
+        +deleteAction()
+        +generateActions()
     }
 
     class api {
         <<Axios Instance>>
-        baseURL
-        JWT interceptor
-        401 interceptor
+        String baseURL
+        jwtInterceptor
+        errorInterceptor
     }
 
     App --> DefaultLayout
@@ -227,7 +227,7 @@ classDiagram
     profileService --> api
     planService --> api
 
-    api -->|HTTP REST + JWT| Backend["Backend API"]
+    api -- HTTP REST + JWT --> Backend
 ```
 
 ---
@@ -278,6 +278,6 @@ graph LR
         Pages --> Composables["Composables"]
     end
 
-    Services -->|"HTTP REST + JWT"| Backend["Backend API (FastAPI)"]
-    VueApp -->|"OAuth redirect"| Google["Google OAuth"]
+    Services -- HTTP REST + JWT --> Backend["Backend API FastAPI"]
+    VueApp -- OAuth redirect --> Google["Google OAuth"]
 ```

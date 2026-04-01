@@ -256,18 +256,18 @@ sequenceDiagram
 
 ```mermaid
 graph LR
-    Frontend["Frontend (Vue.js)"] -->|HTTP REST + JWT| FastAPI
+    Frontend["Frontend Vue.js"] -- HTTP REST + JWT --> FastAPI
 
     subgraph Backend
-        FastAPI["FastAPI"] --> AuthModule["Auth (OAuth + JWT)"]
+        FastAPI["FastAPI"] --> AuthModule["Auth - OAuth + JWT"]
         FastAPI --> ProfileModule["Profile Service"]
         FastAPI --> PlansModule["Plans Service"]
         PlansModule --> GeminiClient["Gemini Client"]
         GeminiClient --> Agents["PydanticAI Agents"]
     end
 
-    AuthModule -->|OAuth 2.0| Google["Google OAuth"]
-    Agents -->|API| Gemini["Google Gemini 2.5 Flash"]
+    AuthModule -- OAuth 2.0 --> Google["Google OAuth"]
+    Agents -- API --> Gemini["Google Gemini 2.5 Flash"]
     ProfileModule --> SQLite["SQLite"]
     PlansModule --> SQLite
     AuthModule --> SQLite
