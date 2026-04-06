@@ -7,7 +7,7 @@ Registro completo das interações com IA (Kiro CLI) no projeto [grupo-6-mentori
 | Campo | Detalhe |
 |-------|---------|
 | **Nome** | Paulo Sérgio Nunes Gonçalves |
-| **Responsabilidade** | Desenvolvimento completo do frontend (Vue 3, PrimeVue, Tailwind CSS), modo escuro, integração com backend, infraestrutura (Docker, CORS, migrations) |
+| **Responsabilidade** | Desenvolvimento completo do frontend (Vue 3, PrimeVue, Tailwind CSS), modo escuro, integração com backend|
 | **Ferramenta de IA** | Kiro CLI (agente IA com acesso a terminal e filesystem) |
 | **Modelo utilizado** | `auto`, `claude-opus-4.6` |
 | **Total de prompts** | 113 |
